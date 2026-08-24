@@ -49,6 +49,7 @@ export async function getEnvStatusAction(variantParam?: string | null): Promise<
     ? (variantParam as SystemVariant)
     : getSystemVariant();
   const override = variant === "default" ? getActiveEnv() : getEnvForVariant(variant);
+  const prefix = variant === "default" ? "" : variant.toUpperCase().replace(/-/g, "_");
   const present: Record<RequiredKey, boolean> = {
     SENDER_EMAIL: !!override.SENDER_EMAIL,
     SENDER_APP_PASSWORD: !!override.SENDER_APP_PASSWORD,
@@ -71,9 +72,13 @@ export async function getEnvStatusAction(variantParam?: string | null): Promise<
     profiles: listProfiles(),
     systemVariant: variant,
     hint:
-      "Create a .env.local file in the project root with SENDER_EMAIL, SENDER_APP_PASSWORD (e.g. Gmail App Password), and SENDER_NAME. Restart the server after changes.",
+      variant === "default"
+        ? "Create a .env.local file in the project root with SENDER_EMAIL, SENDER_APP_PASSWORD (e.g. Gmail App Password), and SENDER_NAME. Restart the server after changes."
+        : `Set ${prefix}_SENDER_EMAIL, ${prefix}_SENDER_APP_PASSWORD, and ${prefix}_SENDER_NAME in your environment, then restart the server.`,
     example:
-      "SENDER_EMAIL=you@example.com\nSENDER_APP_PASSWORD=abcd abcd abcd abcd\nSENDER_NAME=Your Name",
+      variant === "default"
+        ? "SENDER_EMAIL=you@example.com\nSENDER_APP_PASSWORD=abcd abcd abcd abcd\nSENDER_NAME=Your Name"
+        : `${prefix}_SENDER_EMAIL=you@example.com\n${prefix}_SENDER_APP_PASSWORD=abcd abcd abcd abcd\n${prefix}_SENDER_NAME=Your Name`,
   };
 }
 
@@ -131,6 +136,7 @@ export async function setVariantAction(variant: string) {
     "arduinodayph",
     "cyberph",
     "cyberph-noreply",
+    "shaikah",
   ]);
   const normalized = typeof variant === "string" ? variant.toLowerCase() : "default";
   if (!allowed.has(normalized)) {
@@ -144,6 +150,7 @@ export async function setVariantAction(variant: string) {
       | "arduinodayph"
       | "cyberph"
       | "cyberph-noreply"
+      | "shaikah"
   );
   return { ok: true, variant: normalized } as const;
 }

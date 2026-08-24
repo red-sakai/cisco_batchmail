@@ -35,6 +35,12 @@ export default function Docs() {
         <code>
           # .env SENDER_EMAIL=you@example.com
           SENDER_APP_PASSWORD=your-app-password SENDER_NAME=Your Display Name
+
+          # System variants can also use prefixed env keys, e.g.
+          # SHAIKAH_SENDER_EMAIL=you@example.com
+          # SHAIKAH_SENDER_APP_PASSWORD=your-app-password
+          # SHAIKAH_SENDER_NAME=Your Display Name
+          # Lowercase shaikah_sender_* keys are also accepted.
         </code>
       </pre>
       <ul>
@@ -47,6 +53,9 @@ export default function Docs() {
         </li>
         <li>
           <strong>SENDER_NAME</strong> – Friendly display name.
+        </li>
+        <li>
+          <strong>SHAIKAH_SENDER_EMAIL / SHAIKAH_SENDER_APP_PASSWORD / SHAIKAH_SENDER_NAME</strong> – System env option for the Shaikah sender profile.
         </li>
       </ul>
       <p>

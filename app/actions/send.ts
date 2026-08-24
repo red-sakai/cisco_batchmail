@@ -30,7 +30,8 @@ export type SendPayload = {
     | "cisco"
     | "arduinodayph"
     | "cyberph"
-    | "cyberph-noreply";
+    | "cyberph-noreply"
+    | "shaikah";
 };
 
 export type SendItem = {

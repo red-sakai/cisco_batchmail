@@ -17,6 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { SystemVariant } from "@/lib/envStore";
 import type { CsvMapping, ParsedCsv } from "./CsvUploader";
 // email editing is performed in the Template tab
 import type { AttachIndex } from "./AttachmentsUploader";
@@ -95,12 +96,7 @@ export default function PreviewPane({
   const [envOk, setEnvOk] = useState<boolean | null>(null);
   const [missing, setMissing] = useState<string[]>([]);
   const [systemVariant, setSystemVariantState] = useState<
-    "default"
-    | "icpep"
-    | "cisco"
-    | "arduinodayph"
-    | "cyberph"
-    | "cyberph-noreply"
+    SystemVariant
   >("default");
   // Default (.env) variant supports optional one-off upload/paste overrides (not persistent profiles)
   const [showPaste, setShowPaste] = useState(false);
@@ -119,7 +115,8 @@ export default function PreviewPane({
         d.systemVariant === "cisco" ||
         d.systemVariant === "arduinodayph" ||
         d.systemVariant === "cyberph" ||
-        d.systemVariant === "cyberph-noreply"
+        d.systemVariant === "cyberph-noreply" ||
+        d.systemVariant === "shaikah"
       )
         setSystemVariantState(d.systemVariant);
       else setSystemVariantState("default");
@@ -314,6 +311,8 @@ export default function PreviewPane({
         ? "ICPEP SE - PUP Manila"
         : systemVariant === "cisco"
         ? "CNCP - Cisco NetConnect PUP"
+        : systemVariant === "shaikah"
+        ? "Shaikah"
         : systemVariant === "cyberph"
         ? "CyberPH"
         : systemVariant === "cyberph-noreply"
@@ -328,6 +327,8 @@ export default function PreviewPane({
         ? "/icpep-logo.jpg"
         : systemVariant === "cisco"
         ? "/cisco-logo.jpg"
+        : systemVariant === "shaikah"
+        ? null
         : systemVariant === "cyberph" || systemVariant === "cyberph-noreply"
         ? "/cyberph-logo.svg"
         : null,
@@ -368,8 +369,9 @@ export default function PreviewPane({
           systemVariant,
         };
         const res = await sendBatchAction(body);
-        if (!res.ok || !("items" in res)) {
-          // mark whole batch as failed
+        const hasItems = "items" in res && Array.isArray((res as { items?: unknown }).items);
+        if (!hasItems) {
+          // mark whole batch as failed when the server could not return per-recipient results
           for (const r of batch) {
             const to = String(r[mapping.recipient] || "");
             setSendModalLogs((prev) => [
@@ -389,9 +391,10 @@ export default function PreviewPane({
           }));
           continue;
         }
+        const items = res.items;
         setSendModalLogs((prev) => [
           ...prev,
-          ...res.items.map((obj) => ({
+          ...items.map((obj) => ({
             to: obj.to,
             status: obj.status,
             subject: obj.subject,
@@ -405,8 +408,8 @@ export default function PreviewPane({
           })),
         ]);
         setSendModalSummary((prev) => ({
-          sent: prev.sent + res.sent,
-          failed: prev.failed + res.failed,
+          sent: prev.sent + (res.sent || 0),
+          failed: prev.failed + (res.failed || 0),
         }));
         // small pause between batches
         await new Promise((r) => setTimeout(r, 200));
@@ -530,7 +533,8 @@ export default function PreviewPane({
                     | "cisco"
                     | "arduinodayph"
                     | "cyberph"
-                    | "cyberph-noreply";
+                    | "cyberph-noreply"
+                    | "shaikah";
                   try {
                     await setVariantAction(val);
                   } catch {}
@@ -543,6 +547,7 @@ export default function PreviewPane({
                 <option value="arduinodayph">Arduino Day Philippines</option>
                 <option value="cyberph">CyberPH</option>
                 <option value="cyberph-noreply">CyberPH - noreply</option>
+                <option value="shaikah">Shaikah</option>
               </select>
             </div>
             {/* Brand logo based on selection */}

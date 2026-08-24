@@ -14,6 +14,7 @@ export const SYSTEM_VARIANTS = [
   "arduinodayph",
   "cyberph",
   "cyberph-noreply",
+  "shaikah",
 ] as const;
 
 export type SystemVariant = (typeof SYSTEM_VARIANTS)[number];
@@ -32,13 +33,32 @@ const readEnv = (key: string) => {
   return trimmed.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
 };
 
+const readEnvAny = (...keys: string[]) => {
+  for (const key of keys) {
+    const value = readEnv(key);
+    if (value !== undefined) return value;
+  }
+  return undefined;
+};
+
+const readPrefixedEnv = (prefix: string, suffix: string) =>
+  readEnvAny(
+    `${prefix}_${suffix}`,
+    `${prefix.toLowerCase()}_${suffix.toLowerCase()}`
+  );
+
 const readPassword = (prefix: string) =>
-  readEnv(`${prefix}_SENDER_APP_PASSWORD`) ?? readEnv(`${prefix}_SENDER_PASSWORD`);
+  readEnvAny(
+    `${prefix}_SENDER_APP_PASSWORD`,
+    `${prefix}_SENDER_PASSWORD`,
+    `${prefix.toLowerCase()}_sender_app_password`,
+    `${prefix.toLowerCase()}_sender_password`
+  );
 
 const readSenderEnv = (prefix: string): EnvMap => ({
-  SENDER_EMAIL: readEnv(`${prefix}_SENDER_EMAIL`),
+  SENDER_EMAIL: readPrefixedEnv(prefix, "SENDER_EMAIL"),
   SENDER_APP_PASSWORD: readPassword(prefix),
-  SENDER_NAME: readEnv(`${prefix}_SENDER_NAME`),
+  SENDER_NAME: readPrefixedEnv(prefix, "SENDER_NAME"),
 });
 
 export function listProfiles(): string[] {
@@ -76,15 +96,15 @@ export function getSystemVariant(): SystemVariant {
 
 const readCyberphEnv = (prefix: string, fallbackPrefix = "CYBERPH"): EnvMap => ({
   SENDER_EMAIL:
-    readEnv(`${prefix}_SENDER_EMAIL`) ?? readEnv(`${fallbackPrefix}_SENDER_EMAIL`),
+    readPrefixedEnv(prefix, "SENDER_EMAIL") ?? readPrefixedEnv(fallbackPrefix, "SENDER_EMAIL"),
   SENDER_APP_PASSWORD:
     readPassword(prefix) ?? readPassword(fallbackPrefix),
   SENDER_NAME:
-    readEnv(`${prefix}_SENDER_NAME`) ?? readEnv(`${fallbackPrefix}_SENDER_NAME`),
+    readPrefixedEnv(prefix, "SENDER_NAME") ?? readPrefixedEnv(fallbackPrefix, "SENDER_NAME"),
   HOST_DOMAIN:
-    readEnv(`${prefix}_HOST_DOMAIN`) ?? readEnv(`${fallbackPrefix}_HOST_DOMAIN`),
-  PORT: readEnv(`${prefix}_PORT`) ?? readEnv(`${fallbackPrefix}_PORT`),
-  PORT_ALT: readEnv(`${prefix}_PORT_ALT`) ?? readEnv(`${fallbackPrefix}_PORT_ALT`),
+    readPrefixedEnv(prefix, "HOST_DOMAIN") ?? readPrefixedEnv(fallbackPrefix, "HOST_DOMAIN"),
+  PORT: readPrefixedEnv(prefix, "PORT") ?? readPrefixedEnv(fallbackPrefix, "PORT"),
+  PORT_ALT: readPrefixedEnv(prefix, "PORT_ALT") ?? readPrefixedEnv(fallbackPrefix, "PORT_ALT"),
 });
 
 export function getEnvForVariant(variant: SystemVariant): EnvMap {
@@ -99,6 +119,8 @@ export function getEnvForVariant(variant: SystemVariant): EnvMap {
       return readCyberphEnv("CYBERPH");
     case "cyberph-noreply":
       return readCyberphEnv("CYBERPH_NOREPLY", "CYBERPH");
+    case "shaikah":
+      return readSenderEnv("SHAIKAH");
     default:
       return {};
   }
