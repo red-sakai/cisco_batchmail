@@ -179,7 +179,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             />
             <label
               htmlFor="csv-file-input"
-              className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm cursor-pointer hover:bg-gray-50 focus-within:ring-2 focus-within:ring-green-600"
+              className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm cursor-pointer hover:bg-gray-50 focus-within:ring-2 focus-within:ring-[#049fd9]"
             >
               <span className="inline-block">{fileName || "Choose CSV"}</span>
             </label>
@@ -214,9 +214,9 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
           onDragOver={onDrag}
           onDragLeave={onDrag}
           onDrop={onDrop}
-          className={`group relative rounded-md border border-dashed p-6 text-center transition-colors ${dragActive ? "border-green-500 bg-green-50" : "border-gray-200"}`}
+          className={`group relative rounded-md border border-dashed p-6 text-center transition-colors ${dragActive ? "border-[#049fd9] bg-[#ebf6fc] dark:bg-[#10263f]" : "border-gray-200"}`}
         >
-          <p className="text-sm">{dragActive ? "Release to upload CSV" : "Drag & drop CSV here or use the button above."}</p>
+          <p className="text-sm">{dragActive ? "Release to upload CSV" : "Drag & drop your recipient CSV here, or use the buttons above."}</p>
         </div>
       </div>
 
@@ -265,7 +265,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                         value={manualRow[header] || ""}
                         onChange={(e) => setManualRow((prev) => ({ ...prev, [header]: e.target.value }))}
                         placeholder={header.toLowerCase().includes("email") ? "email@example.com" : `Enter ${header}`}
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -298,7 +298,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             </table>
           </div>
           <div className="text-xs text-gray-500">
-            {csv?.rowCount ? `${csv.rowCount} recipient${csv.rowCount !== 1 ? "s" : ""} added` : "No recipients yet"} — Press Enter or click "+ Row" to add
+            {csv?.rowCount ? `${csv.rowCount} recipient${csv.rowCount !== 1 ? "s" : ""} added` : "No recipients yet"} — Press Enter or click <span className="font-mono">+ Row</span> to add
           </div>
         </div>
       )}
@@ -310,7 +310,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             <label className="text-sm flex flex-col gap-1">
               <span className="text-xs font-medium opacity-80">Recipient column</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                 value={mapping?.recipient || ""}
                 onChange={(e) => onChangeSelect("recipient", e.target.value)}
               >
@@ -322,7 +322,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             <label className="text-sm flex flex-col gap-1">
               <span className="text-xs font-medium opacity-80">Name column</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                 value={mapping?.name || ""}
                 onChange={(e) => onChangeSelect("name", e.target.value)}
               >
@@ -334,7 +334,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
             <label className="text-sm flex flex-col gap-1">
               <span className="text-xs font-medium opacity-80">Subject column (optional)</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                 value={mapping?.subject || ""}
                 onChange={(e) => onChangeSelect("subject", e.target.value)}
               >

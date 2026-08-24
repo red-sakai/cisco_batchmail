@@ -127,7 +127,7 @@ function EmailEditorInner(
     pendingHistoryRef.current = null;
     historyRef.current = [clean];
     historyIndexRef.current = 0;
-    syncHistoryFlags(0);
+    queueMicrotask(() => syncHistoryFlags(0));
   }, [value]);
 
   const scheduleHistoryEntry = (clean: string, immediate?: boolean) => {

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: `dark:` utilities follow the `.dark` class on <html>,
+   matching the in-app toggle (not the OS prefers-color-scheme). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Driver.js styles */
 .driver-popover {
   all: unset;
@@ -96,7 +100,9 @@
   pointer-events: none;
 }
 .driver-popover-footer button:hover {
-  background-color: #f7f7f7;
+  background-color: #ebf6fc;
+  border-color: #049fd9;
+  color: #0d274d;
 }
 .driver-popover-navigation-btns {
   display: flex;
@@ -178,7 +184,7 @@
   bottom: 0;
   display: block;
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(13, 39, 77, 0.6);
   z-index: 10000;
 }
 .driver-active .driver-overlay ~ * {
@@ -194,79 +200,123 @@
   pointer-events: auto !important;
 }
 
+/* ===== Cisco NetConnect PUP - Manila design tokens ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #111827; /* neutral slate-900 */
-  --accent: #16a34a; /* primary green reserved for navbar */
-  --accent-muted: #dcfce7; /* reserved */
-  --border: #e5e7eb; /* gray-200 */
+  --background: #f5f8fb;
+  --surface: #ffffff;
+  --foreground: #0d274d; /* Cisco deep navy */
+  --accent: #049fd9; /* Cisco blue */
+  --accent-strong: #0071a4; /* hover / pressed */
+  --accent-deep: #0d274d; /* navy for headers & active states */
+  --accent-soft: #ebf6fc; /* light sky tint */
+  --border: #dbe4ec;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* Keep site white in dark mode as requested */
-  :root {
-    --background: #ffffff;
-    --foreground: #111827;
-    --accent: #16a34a;
-    --accent-muted: #dcfce7;
-    --border: #e5e7eb;
-  }
-}
-
 body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Minimal green utilities kept for navbar only */
-.border-green-600 { border-color: #16a34a; }
-.bg-green-600 { background-color: #16a34a; }
+/* ===== Ambient Cisco backdrop ===== */
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  background-image: url("/cisco_extended_image.jpg");
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.03);
+  filter: blur(2px) saturate(1.06);
+}
+/* Soft veil so UI stays readable while the artwork glows through */
+.site-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 248, 251, 0.86) 0%,
+    rgba(245, 248, 251, 0.52) 38%,
+    rgba(245, 248, 251, 0.82) 100%
+  );
+}
+.dark .site-backdrop::after {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 19, 36, 0.88) 0%,
+    rgba(7, 19, 36, 0.58) 38%,
+    rgba(7, 19, 36, 0.92) 100%
+  );
+}
 
-/* Card styling refinement */
+/* Frosted glass shell for the main workspace panel */
+.tabs-shell {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.dark .tabs-shell {
+  background: rgba(12, 28, 51, 0.74);
+}
+
 .card {
-  background: #ffffff;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0.75rem;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(13, 39, 77, 0.06), 0 1px 3px rgba(13, 39, 77, 0.08);
 }
 
 /* ===== Dark theme overrides (activated by wrapping container with class "dark") ===== */
 .dark {
-  --background: #0b0f1a; /* deep slate */
-  --foreground: #f3f4f6; /* gray-100 */
-  --border: #253145; /* slate-700ish */
+  --background: #071324; /* near-black navy */
+  --surface: #0c1c33;
+  --foreground: #eaf2fa;
+  --accent: #38bdf8; /* brighter cisco blue for contrast */
+  --accent-strong: #049fd9;
+  --accent-deep: #0c1c33;
+  --accent-soft: #10263f;
+  --border: #22405f;
 }
 
 .dark body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
+}
+
+.dark .card {
+  background: var(--surface);
 }
 
 /* Text overrides for common gray/black classes to ensure readability */
 .dark .text-gray-900,
 .dark .text-gray-800,
 .dark .text-gray-700,
-.dark .text-black { color: #f3f4f6; }
-.dark .text-gray-600 { color: #e5e7eb; }
-.dark .text-gray-500 { color: #cbd5e1; }
+.dark .text-black { color: #eaf2fa; }
+.dark .text-gray-600 { color: #d3e2ef; }
+.dark .text-gray-500 { color: #a9c1d6; }
 
 /* Background overrides for common light backgrounds used across components */
-.dark .bg-white { background-color: #111827; }
-.dark .bg-gray-50 { background-color: #0f172a; }
-.dark .bg-gray-100 { background-color: #0f172a; }
-.dark .bg-yellow-50 { background-color: #3f3300; }
+.dark .bg-white { background-color: #0c1c33; }
+.dark .bg-gray-50 { background-color: #10263f; }
+.dark .bg-gray-100 { background-color: #10263f; }
+.dark .bg-yellow-50 { background-color: #33290a; }
 
 /* Hover utilities commonly used */
-.dark .hover\:bg-gray-50:hover { background-color: #0f172a; }
-.dark .hover\:bg-gray-100:hover { background-color: #0f172a; }
+.dark .hover\:bg-gray-50:hover { background-color: #10263f; }
+.dark .hover\:bg-gray-100:hover { background-color: #16304d; }
 
 /* Borders */
 .dark .border { border-color: var(--border); }
@@ -278,31 +328,31 @@ body {
 /* Inputs, selects, textareas */
 .dark input,
 .dark select,
-.dark textarea { background-color: #0f172a; color: #f3f4f6; border-color: var(--border); }
+.dark textarea { background-color: #10263f; color: #eaf2fa; border-color: var(--border); }
 .dark input::placeholder,
-.dark textarea::placeholder { color: #9ca3af; }
+.dark textarea::placeholder { color: #7f9cb5; }
 
 /* Tables and alternating rows */
-.dark table { background-color: #0b0f1a; color: #e5e7eb; }
-.dark thead { background-color: #111827; }
+.dark table { background-color: #0c1c33; color: #d3e2ef; }
+.dark thead { background-color: #122a47; }
 .dark th, .dark td { border-color: var(--border); }
-.dark tbody tr:nth-child(odd) { background-color: #0b1020; }
-.dark tbody tr:nth-child(even) { background-color: #0f172a; }
+.dark tbody tr:nth-child(odd) { background-color: #0c1c33; }
+.dark tbody tr:nth-child(even) { background-color: #10263f; }
 
 /* Code blocks or monospace areas if any */
-.dark .font-mono { color: #e5e7eb; }
+.dark .font-mono { color: #d3e2ef; }
 
 /* Buttons that are light by default */
 .dark .bg-white.border,
 .dark .border-gray-300.bg-white,
-.dark .border-gray-200.bg-white { background-color: #0f172a; color: #f3f4f6; border-color: var(--border); }
+.dark .border-gray-200.bg-white { background-color: #10263f; color: #eaf2fa; border-color: var(--border); }
 
 /* Badges/pills tweaks for visibility */
-.dark .bg-green-50 { background-color: #0f2a19; }
+.dark .bg-green-50 { background-color: #0d2f20; }
 .dark .text-green-800 { color: #86efac; }
-.dark .bg-red-50 { background-color: #2a0f17; }
+.dark .bg-red-50 { background-color: #33111b; }
 .dark .text-red-800 { color: #fda4af; }
-.dark .bg-yellow-100 { background-color: #3f3300; }
+.dark .bg-yellow-100 { background-color: #33290a; }
 .dark .text-yellow-800 { color: #fde68a; }
 
 /* ===== Keep-light utilities to exclude certain areas from dark ===== */
@@ -313,9 +363,9 @@ body {
 }
 .dark .keep-light-text { color: #1f2937 !important; }
 .dark .keep-light-pill {
-  background-color: #fef3c7 !important; /* yellow-100 */
-  color: #92400e !important;           /* yellow-800 */
-  border-color: #fde68a !important;     /* yellow-300 */
+  background-color: #ebf6fc !important; /* cisco sky tint */
+  color: #0d274d !important;           /* navy */
+  border-color: #9bd8f3 !important;    /* light cisco blue */
 }
 
 /* Keep only the actual email editor surface light in dark mode */
@@ -359,5 +409,14 @@ body {
 }
 
 /* Links and buttons in email content keep light-mode colors */
-.dark .email-editor-surface a { color: #1d4ed8 !important; }
+.dark .email-editor-surface a { color: #049fd9 !important; }
 .dark .email-editor-surface button { color: #111827 !important; }
+
+/* Brand scrollbar accents */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(4, 159, 217, 0.35);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(4, 159, 217, 0.55); }

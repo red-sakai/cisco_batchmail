@@ -96,14 +96,14 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
             placeholder="Filter..."
           />
         </label>
         <label className="inline-flex items-center gap-2">
           <span className="opacity-70">Show</span>
           <select
-            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
           >
@@ -127,7 +127,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
             value={newHeader}
             onChange={(e) => setNewHeader(e.target.value)}
             placeholder="New column name"
-            className="w-52 rounded-md border border-gray-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-600"
+            className="w-52 rounded-md border border-gray-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
           />
           <button
             type="button"
@@ -189,7 +189,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="odd:bg-white even:bg-gray-50 hover:bg-green-50/40">
+              <tr key={i} className="odd:bg-white even:bg-gray-50 hover:bg-[#ebf6fc]/60 dark:bg-[#10263f]/60">
                 {csv.headers.map((h) => {
                   const isEditing = editingCell && editingCell.row === i && editingCell.header === h;
                   return (
@@ -210,7 +210,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                               setEditingCell(null);
                             }
                           }}
-                          className="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-green-600"
+                          className="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                         />
                       ) : (
                         <span className="whitespace-pre-wrap break-words text-[13px] leading-snug">{row[h]}</span>

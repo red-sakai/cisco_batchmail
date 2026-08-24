@@ -149,14 +149,14 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
       <div className="text-xs flex flex-wrap gap-3">
         <span className="opacity-70">Summary:</span>
   <span><strong>Total:</strong> {computed.files}</span>
-  <span className="text-green-700"><strong>Matched:</strong> {computed.matched}</span>
+  <span className="text-[#0071a4] dark:text-[#7dd3fc]"><strong>Matched:</strong> {computed.matched}</span>
   <span className="text-red-700"><strong>Unmatched:</strong> {computed.unmatched}</span>
       </div>
 
       {/* Matched pairs table */}
       {computed.matchedPairs.length > 0 && (
         <details className="text-xs" open>
-          <summary className="cursor-pointer font-medium text-green-700">View matched attachments ({computed.matched} files)</summary>
+          <summary className="cursor-pointer font-medium text-[#0071a4] dark:text-[#7dd3fc]">View matched attachments ({computed.matched} files)</summary>
           <div className="mt-2 overflow-x-auto border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 sticky top-0">
@@ -170,7 +170,7 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
                   <tr key={i} className="border-b border-gray-200 last:border-b-0">
                     <td className="px-3 py-2 text-gray-900 align-top whitespace-nowrap">
                       <span className="inline-flex items-center gap-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-green-600 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-[#049fd9] dark:text-[#38bdf8] flex-shrink-0">
                           <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
                         </svg>
                         {pair.name}

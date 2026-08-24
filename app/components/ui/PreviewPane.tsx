@@ -1,12 +1,7 @@
 "use client";
 
 import { normalizeNameKey } from "@/lib/normalizeName";
-import {
-  clearEnvAction,
-  getEnvStatusAction,
-  setVariantAction,
-  uploadEnvAction,
-} from "@/app/actions/env";
+import { getEnvStatusAction } from "@/app/actions/env";
 import { sendBatchAction } from "@/app/actions/send";
 import Image from "next/image";
 import nunjucks from "nunjucks";
@@ -17,11 +12,76 @@ import {
   useRef,
   useState,
 } from "react";
-import type { SystemVariant } from "@/lib/envStore";
 import type { CsvMapping, ParsedCsv } from "./CsvUploader";
 // email editing is performed in the Template tab
 import type { AttachIndex } from "./AttachmentsUploader";
 import VariablePicker from "./VariablePicker";
+
+const SENDER_LABEL = "Cisco NetConnect PUP – Manila";
+
+function StatCard({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2.5">
+      <div className="text-xl font-semibold text-gray-900 tabular-nums leading-tight">
+        {value}
+      </div>
+      <div className="text-xs font-medium text-gray-700">{label}</div>
+      {sub && <div className="text-[11px] text-gray-500">{sub}</div>}
+    </div>
+  );
+}
+
+function CheckChip({
+  done,
+  loading = false,
+  label,
+  pendingLabel,
+}: {
+  done: boolean;
+  loading?: boolean;
+  label: string;
+  pendingLabel?: string;
+}) {
+  const pending = pendingLabel ?? label;
+  return (
+    <li
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${
+        done
+          ? "border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] text-[#0071a4] dark:text-[#7dd3fc]"
+          : loading
+          ? "border-gray-200 bg-gray-50 text-gray-500"
+          : "border-yellow-300 bg-yellow-50 text-yellow-800"
+      }`}
+    >
+      {done ? (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+          <path
+            fillRule="evenodd"
+            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 20 20" fill="currentColor" className={`h-3.5 w-3.5 ${loading ? "animate-pulse" : ""}`} aria-hidden="true">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+            clipRule="evenodd"
+          />
+        </svg>
+      )}
+      <span className="font-medium">{done ? label : pending}</span>
+    </li>
+  );
+}
 
 const PREVIEW_RESET_STYLE =
   "<style>html,body{margin:0!important;padding:0!important;background-color:transparent!important;}</style>";
@@ -95,34 +155,13 @@ export default function PreviewPane({
   const ready = !!csv && !!mapping && !!template?.trim();
   const [envOk, setEnvOk] = useState<boolean | null>(null);
   const [missing, setMissing] = useState<string[]>([]);
-  const [systemVariant, setSystemVariantState] = useState<
-    SystemVariant
-  >("default");
-  // Default (.env) variant supports optional one-off upload/paste overrides (not persistent profiles)
-  const [showPaste, setShowPaste] = useState(false);
-  const [pasteValue, setPasteValue] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [overrideApplied, setOverrideApplied] = useState(false);
   const subjectInputRef = useRef<HTMLInputElement | null>(null);
 
-  const refreshEnvStatus = useCallback(
-    async (variantOverride?: string | null) => {
-      const d = await getEnvStatusAction(variantOverride ?? null);
-      setEnvOk(!!d.ok);
-      setMissing(Array.isArray(d.missing) ? d.missing : []);
-      if (
-        d.systemVariant === "icpep" ||
-        d.systemVariant === "cisco" ||
-        d.systemVariant === "arduinodayph" ||
-        d.systemVariant === "cyberph" ||
-        d.systemVariant === "cyberph-noreply" ||
-        d.systemVariant === "shaikah"
-      )
-        setSystemVariantState(d.systemVariant);
-      else setSystemVariantState("default");
-    },
-    []
-  );
+  const refreshEnvStatus = useCallback(async () => {
+    const d = await getEnvStatusAction();
+    setEnvOk(!!d.ok);
+    setMissing(Array.isArray(d.missing) ? d.missing : []);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -136,10 +175,6 @@ export default function PreviewPane({
       mounted = false;
     };
   }, [refreshEnvStatus]);
-
-  // Profiles removed from UI; using only system variant mapping.
-
-  // Attachment handling removed from PreviewPane (now in CSV tab).
 
   // Cooldown timer: when cooldownSec > 0, tick down every second
   useEffect(() => {
@@ -305,36 +340,6 @@ export default function PreviewPane({
     [onSubjectChange, subjectTemplate]
   );
 
-  const variantLabel = useMemo(
-    () =>
-      systemVariant === "icpep"
-        ? "ICPEP SE - PUP Manila"
-        : systemVariant === "cisco"
-        ? "CNCP - Cisco NetConnect PUP"
-        : systemVariant === "shaikah"
-        ? "Shaikah"
-        : systemVariant === "cyberph"
-        ? "CyberPH"
-        : systemVariant === "cyberph-noreply"
-        ? "CyberPH - noreply"
-        : "Default (.env)",
-    [systemVariant]
-  );
-
-  const variantLogo = useMemo(
-    () =>
-      systemVariant === "icpep"
-        ? "/icpep-logo.jpg"
-        : systemVariant === "cisco"
-        ? "/cisco-logo.jpg"
-        : systemVariant === "shaikah"
-        ? null
-        : systemVariant === "cyberph" || systemVariant === "cyberph-noreply"
-        ? "/cyberph-logo.svg"
-        : null,
-    [systemVariant]
-  );
-
   const doSendEmails = useCallback(async () => {
     if (!ready || !csv || !mapping) return;
     const allRows = csv.rows.filter((r) => r[mapping.recipient]);
@@ -366,11 +371,11 @@ export default function PreviewPane({
           attachmentsByName,
           delayMs: 2000,
           jitterMs: 250,
-          systemVariant,
         };
         const res = await sendBatchAction(body);
-        const hasItems = "items" in res && Array.isArray((res as { items?: unknown }).items);
-        if (!hasItems) {
+        const items =
+          "items" in res && Array.isArray(res.items) ? res.items : undefined;
+        if (!items) {
           // mark whole batch as failed when the server could not return per-recipient results
           for (const r of batch) {
             const to = String(r[mapping.recipient] || "");
@@ -391,7 +396,6 @@ export default function PreviewPane({
           }));
           continue;
         }
-        const items = res.items;
         setSendModalLogs((prev) => [
           ...prev,
           ...items.map((obj) => ({
@@ -428,357 +432,148 @@ export default function PreviewPane({
     subjectTemplate,
     attachmentsByName,
     batchSize,
-    systemVariant,
+    maxBatchSize,
   ]);
 
-  // Upload local .env to override default credentials (only allowed in default variant)
-  const uploadEnvFile = async (file: File) => {
-    if (systemVariant !== "default") return; // safety
-    const fd = new FormData();
-    fd.append("file", file);
-    setUploading(true);
-    try {
-      const data = await uploadEnvAction(fd);
-      await refreshEnvStatus();
-      if (!data.ok) {
-        alert(
-          `.env upload processed but missing: ${
-            data.missing?.join(", ") || "unknown"
-          }`
-        );
-      } else {
-        setOverrideApplied(true);
-      }
-    } catch (e) {
-      alert(`.env upload failed: ${(e as Error).message}`);
-    } finally {
-      setUploading(false);
-    }
-  };
+  const attachmentFileCount = useMemo(
+    () =>
+      Object.values(attachmentsByName || {}).reduce(
+        (n, arr) => n + (Array.isArray(arr) ? arr.length : 0),
+        0
+      ),
+    [attachmentsByName]
+  );
 
-  const submitPaste = async () => {
-    if (systemVariant !== "default") {
-      setShowPaste(false);
-      return;
-    }
-    if (!pasteValue.trim()) {
-      setShowPaste(false);
-      return;
-    }
-    setUploading(true);
-    try {
-      const data = await uploadEnvAction({ envText: pasteValue });
-      await refreshEnvStatus();
-      if (!data.ok) {
-        alert(
-          `Paste processed but missing: ${
-            data.missing?.join(", ") || "unknown"
-          }`
-        );
-      } else {
-        setOverrideApplied(true);
-      }
-    } catch (e) {
-      alert(`Paste failed: ${(e as Error).message}`);
-    } finally {
-      setUploading(false);
-      setShowPaste(false);
-      setPasteValue("");
-    }
-  };
+  const currentRow =
+    csv && mapping ? csv.rows[previewRowIndex] : undefined;
+  const currentRecipientName = currentRow
+    ? currentRow[mapping!.name]
+    : undefined;
+  const currentRecipientEmail = currentRow
+    ? currentRow[mapping!.recipient]
+    : undefined;
 
-  const clearOverride = async () => {
-    if (systemVariant !== "default") return;
-    setUploading(true);
-    try {
-      await clearEnvAction();
-      await refreshEnvStatus();
-      setOverrideApplied(false);
-    } catch (e) {
-      alert(`Clear failed: ${(e as Error).message}`);
-    } finally {
-      setUploading(false);
-    }
-  };
+  const sendBlocker =
+    !csv || !mapping
+      ? "Upload a recipient list in Step 1."
+      : !template?.trim()
+      ? "Choose a message template in Step 2."
+      : envOk === false
+      ? `Missing sender credentials: ${missing.join(", ")}.`
+      : null;
+
+  const canSend = ready && envOk !== false && !isSending && cooldownSec === 0;
 
   return (
     <>
-      <div className="rounded-lg border border-gray-200 p-4 space-y-4">
-        <div
-          className="flex items-center justify-between gap-3 flex-wrap"
-          id="tutorial-env-controls"
-        >
-          <h2 className="text-lg font-medium">3) Preview & Export</h2>
-          <div className="flex items-center gap-2">
-            {/* Variable insertion moved to Template tab */}
-            {envOk === true && (
-              <span className="px-2 py-0.5 rounded border border-green-200 text-xs bg-green-50 text-green-800">
-                Sender env OK
-              </span>
-            )}
-            {envOk === false && (
-              <span className="px-2 py-0.5 rounded border border-red-200 text-xs bg-red-50 text-red-800">
-                Missing env: {missing.join(", ")}
-              </span>
-            )}
-            <div className="flex items-center gap-2 text-xs">
-              <label className="opacity-70">System env:</label>
-              <select
-                className="border border-gray-200 rounded px-3 py-1 bg-white text-sm text-gray-900 hover:bg-gray-50 cursor-pointer h-8"
-                value={systemVariant}
-                onChange={async (e) => {
-                  const val = e.target.value as
-                    | "default"
-                    | "icpep"
-                    | "cisco"
-                    | "arduinodayph"
-                    | "cyberph"
-                    | "cyberph-noreply"
-                    | "shaikah";
-                  try {
-                    await setVariantAction(val);
-                  } catch {}
-                  await refreshEnvStatus(val);
-                }}
-              >
-                <option value="default">Default (.env)</option>
-                <option value="icpep">ICPEP SE - PUP Manila</option>
-                <option value="cisco">CNCP - Cisco NetConnect PUP</option>
-                <option value="arduinodayph">Arduino Day Philippines</option>
-                <option value="cyberph">CyberPH</option>
-                <option value="cyberph-noreply">CyberPH - noreply</option>
-                <option value="shaikah">Shaikah</option>
-              </select>
+      <div className="space-y-4">
+        {/* Readiness overview */}
+        <section className="card p-4 sm:p-5 space-y-4" id="tutorial-env-controls">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h2 className="text-lg font-medium">Review &amp; Send</h2>
+              <p className="text-sm text-gray-600">
+                One last look before your emails go out.
+              </p>
             </div>
-            {/* Brand logo based on selection */}
-            {(() => {
-              // Decide brand from system variant
-              const isIcpep = systemVariant === "icpep";
-              const isCisco = systemVariant === "cisco";
-              const isArduino = systemVariant === "arduinodayph";
-              const isCyberph = systemVariant === "cyberph";
-              const isCyberphNoreply = systemVariant === "cyberph-noreply";
-              if (isIcpep)
-                return (
-                  <Image
-                    src="/icpep-logo.jpg"
-                    alt="ICPEP"
-                    width={80}
-                    height={32}
-                    className="h-8 w-auto rounded-sm border border-gray-200"
-                  />
-                );
-              if (isCisco)
-                return (
-                  <Image
-                    src="/cisco-logo.jpg"
-                    alt="Cisco"
-                    width={80}
-                    height={32}
-                    className="h-8 w-auto rounded-sm border border-gray-200"
-                  />
-                );
-              if (isArduino)
-                return (
-                  <Image
-                    src="/arduinoday.jpg"
-                    alt="Arduino Day Philippines"
-                    width={80}
-                    height={32}
-                    className="h-8 w-auto rounded-sm border border-gray-200"
-                  />
-                );
-              if (isCyberph || isCyberphNoreply)
-                return (
-                  <Image
-                    src="/cyberph-logo.svg"
-                    alt="CyberPH"
-                    width={80}
-                    height={32}
-                    className="h-8 w-auto rounded-sm border border-gray-200"
-                  />
-                );
-              return null;
-            })()}
-            {systemVariant === "default" && (
-              <>
-                <label className="px-3 py-1 rounded border border-gray-200 text-sm bg-white text-gray-900 hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="file"
-                    accept=".env,.txt"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) uploadEnvFile(f);
-                    }}
-                  />
-                  {uploading
-                    ? "Uploading…"
-                    : overrideApplied
-                    ? "Re-upload .env"
-                    : "Upload .env"}
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPaste(true)}
-                  className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50"
-                >
-                  Paste .env
-                </button>
-                {overrideApplied && (
-                  <button
-                    type="button"
-                    onClick={clearOverride}
-                    disabled={uploading}
-                    className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Clear override
-                  </button>
-                )}
-              </>
-            )}
-            <button
-              type="button"
-              disabled={!ready}
-              onClick={() => ready && onExportJson((row) => renderRow(row))}
-              className={`px-3 py-1 rounded border border-gray-200 text-sm ${
-                ready
-                  ? "bg-gray-900 border-gray-900 text-white hover:bg-black"
-                  : "opacity-50 cursor-not-allowed"
-              }`}
-            >
-              Export JSON
-            </button>
-            <button
-              type="button"
-              disabled={
-                !ready || envOk === false || isSending || cooldownSec > 0
+            <span className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2 py-1">
+              <Image
+                src="/cisco-logo.jpg"
+                alt="Cisco"
+                width={64}
+                height={24}
+                className="h-6 w-auto rounded-sm border border-gray-200 bg-white p-px"
+              />
+              <span className="text-xs font-medium text-gray-700">
+                Sending as {SENDER_LABEL}
+              </span>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <StatCard label="Recipients" value={recipients.length} />
+            <StatCard
+              label="Batches"
+              value={batchPreview.length}
+              sub={`up to ${Math.max(1, Math.min(batchSize, maxBatchSize))} per batch`}
+            />
+            <StatCard
+              label="Attachments"
+              value={attachmentFileCount}
+              sub={attachmentsPresent ? "matched by name" : "none"}
+            />
+            <StatCard label="Sender" value="CNCP · Manila" sub="Gmail relay" />
+          </div>
+
+          <ul className="flex flex-wrap gap-2 text-xs">
+            <CheckChip
+              done={!!csv && !!mapping}
+              label="Recipient list ready"
+              pendingLabel="Add a CSV in Step 1"
+            />
+            <CheckChip
+              done={!!template?.trim()}
+              label="Message template ready"
+              pendingLabel="Pick a template in Step 2"
+            />
+            <CheckChip
+              done={envOk === true}
+              loading={envOk === null}
+              label="Sender credentials OK"
+              pendingLabel={
+                envOk === false
+                  ? `Missing: ${missing.join(", ")}`
+                  : "Checking…"
               }
-              onClick={async () => {
-                if (!ready || !csv || !mapping || isSending || cooldownSec > 0)
-                  return;
-                try {
-                  if (
-                    systemVariant === "icpep" ||
-                    systemVariant === "cisco" ||
-                    systemVariant === "cyberph" ||
-                    systemVariant === "cyberph-noreply"
-                  ) {
-                    setShowConfirmModal(true);
-                    return;
-                  }
-                  await doSendEmails();
-                } catch (e) {
-                  alert(`Send error: ${(e as Error).message}`);
-                } finally {
-                }
-              }}
-              className={`px-3 py-1 rounded border border-gray-200 text-sm ${
-                ready && envOk !== false && !isSending && cooldownSec === 0
-                  ? "bg-green-600 border-green-700 text-white hover:bg-green-700"
-                  : "opacity-50 cursor-not-allowed"
-              } ${isSending ? "cursor-wait" : ""}`}
-            >
-              {isSending ? (
-                <span className="inline-flex items-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    />
-                  </svg>
-                  Sending…
-                </span>
-              ) : cooldownSec > 0 ? (
-                `Wait ${cooldownSec}s`
-              ) : (
-                "Send Emails"
-              )}
-            </button>
-            {/* Stream Send button removed per user request */}
-          </div>
-        </div>
+            />
+          </ul>
+        </section>
 
-        {/* Attachments uploader moved to CSV tab */}
-
-        {!csv && (
-          <div className="text-sm opacity-80">
-            Upload a CSV to see previews.
-          </div>
-        )}
-        {csv && !mapping && (
-          <div className="text-sm opacity-80">
-            Set column mapping to preview emails.
-          </div>
-        )}
-        {csv && mapping && !template?.trim() && (
-          <div className="text-sm opacity-80">
-            Provide an HTML template to preview.
-          </div>
+        {!ready && (
+          <section className="card p-6 text-center space-y-2">
+            <p className="text-base font-semibold text-gray-900">
+              Almost there
+            </p>
+            <p className="text-sm text-gray-600 max-w-md mx-auto">
+              {sendBlocker} Once that&rsquo;s done, your live preview, batch
+              plan, and send controls will appear here.
+            </p>
+          </section>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-          <div className="lg:col-span-1 border rounded" id="tutorial-recipient-list">
-            <div className="px-3 py-2 text-sm bg-gray-50 border-b font-medium flex items-center justify-between">
-              <span>Recipients</span>
-              <span className="text-xs opacity-70">{recipients.length}</span>
-            </div>
-            <div className="max-h-80 overflow-auto text-xs">
-              {recipients.length === 0 && (
-                <div className="p-3 opacity-70">
-                  No recipients. Map a recipient column in the CSV tab.
-                </div>
-              )}
-              <ul className="divide-y">
-                {recipients.map((email, idx) => (
-                  <li key={`${email}-${idx}`} className="px-3 py-2">
-                    {email}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
+        {ready && csv && mapping && (
+          <>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
+          {/* Left rail: subject + recipients */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="space-y-2" id="tutorial-subject-editor">
-              <div className="text-sm font-medium">Subject</div>
-              <div className="flex items-center gap-2">
-                <input
-                  ref={subjectInputRef}
-                  value={subjectTemplate}
-                  onChange={(e) => onSubjectChange?.(e.target.value)}
-                  placeholder="e.g. Hello {{ name }}"
-                  className="flex-1 rounded border px-3 py-2 text-sm"
-                />
+            <section
+              className="card p-4 space-y-3"
+              id="tutorial-subject-editor"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-sm font-medium">Subject line</div>
                 <VariablePicker
                   variables={availableVars}
                   label="Insert variable"
                   onInsert={(v) => insertSubjectVariable(v)}
                 />
               </div>
+              <input
+                ref={subjectInputRef}
+                value={subjectTemplate}
+                onChange={(e) => onSubjectChange?.(e.target.value)}
+                placeholder="e.g. Your certificate for {{ event }}"
+                className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+              />
               {allUsed.length > 0 && (
                 <div className="text-xs flex flex-wrap gap-2">
-                  <span className="opacity-70">Variables used:</span>
+                  <span className="text-gray-500">Variables used:</span>
                   {allUsed.map((v) => (
                     <span
                       key={v}
                       className={`px-2 py-0.5 rounded border ${
                         availableVars.includes(v)
-                          ? "bg-green-50 border-green-200 text-green-800"
+                          ? "bg-[#ebf6fc] dark:bg-[#10263f] border-[#049fd9]/30 dark:border-[#38bdf8]/40 text-[#0071a4] dark:text-[#7dd3fc]"
                           : "bg-red-50 border-red-200 text-red-800"
                       }`}
                     >
@@ -793,33 +588,89 @@ export default function PreviewPane({
                   headers)
                 </div>
               )}
-            </div>
+            </section>
 
-            <div className="space-y-2" id="tutorial-preview-frame">
-              <div className="text-sm font-medium">Preview</div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPreviewRowIndex((p) => Math.max(0, p - 1))}
-                  disabled={previewRowIndex === 0}
-                  className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <span className="text-xs text-gray-600">
-                  Previewing row {previewRowIndex + 1} of {csv?.rowCount ?? 0}
+            <section
+              className="card overflow-hidden"
+              id="tutorial-recipient-list"
+            >
+              <div className="px-4 py-2.5 text-sm font-medium bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                <span>Recipients</span>
+                <span className="text-xs font-normal text-gray-600">
+                  {recipients.length} total
                 </span>
-                <button
-                  onClick={() =>
-                    setPreviewRowIndex((p) =>
-                      Math.min((csv?.rowCount ?? 1) - 1, p + 1)
-                    )
-                  }
-                  disabled={!csv || previewRowIndex >= csv.rowCount - 1}
-                  className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
               </div>
+              <div className="max-h-80 overflow-auto text-xs">
+                {recipients.length === 0 && (
+                  <div className="p-3 text-gray-500">
+                    No recipients found in this CSV.
+                  </div>
+                )}
+                <ul className="divide-y divide-gray-100">
+                  {recipients.map((email, idx) => (
+                    <li key={`${email}-${idx}`} className="px-4 py-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewRowIndex(idx)}
+                        className={`w-full text-left truncate hover:text-[#0071a4] dark:hover:text-[#7dd3fc] ${
+                          idx === previewRowIndex
+                            ? "font-semibold text-[#0071a4] dark:text-[#7dd3fc]"
+                            : ""
+                        }`}
+                        title="Preview this recipient"
+                      >
+                        {email}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          </div>
+
+          {/* Right: live preview */}
+          <div className="lg:col-span-3 space-y-4">
+            <section className="card overflow-hidden" id="tutorial-preview-frame">
+              <div className="px-4 py-2.5 text-sm font-medium bg-gray-50 border-b border-gray-200 flex items-center justify-between gap-2 flex-wrap">
+                <span>Live preview</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    aria-label="Previous recipient"
+                    onClick={() => setPreviewRowIndex((p) => Math.max(0, p - 1))}
+                    disabled={previewRowIndex === 0}
+                    className="h-7 w-7 rounded-full border border-gray-200 bg-white text-sm leading-none hover:bg-gray-50 disabled:opacity-40"
+                  >
+                    ‹
+                  </button>
+                  <span className="text-xs font-normal text-gray-600 tabular-nums">
+                    {previewRowIndex + 1} / {csv.rowCount}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Next recipient"
+                    onClick={() =>
+                      setPreviewRowIndex((p) =>
+                        Math.min(csv.rowCount - 1, p + 1)
+                      )
+                    }
+                    disabled={previewRowIndex >= csv.rowCount - 1}
+                    className="h-7 w-7 rounded-full border border-gray-200 bg-white text-sm leading-none hover:bg-gray-50 disabled:opacity-40"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+              <div className="px-4 pt-3 space-y-2">
+                {currentRecipientEmail && (
+                  <div className="text-xs text-gray-600 flex items-center gap-1.5 flex-wrap">
+                    <span className="font-medium text-gray-800">
+                      {currentRecipientName || "(no name)"}
+                    </span>
+                    <span className="text-gray-400">·</span>
+                    <span>{currentRecipientEmail}</span>
+                  </div>
+                )}
               {/* Attachments for current preview row */}
               {(() => {
                 if (!csv || !mapping) return null;
@@ -865,20 +716,25 @@ export default function PreviewPane({
               })()}
               <iframe
                 srcDoc={previewHtml}
-                className="w-full h-96 border rounded bg-white"
+                title="Email preview"
+                className="w-full h-96 rounded-md border border-gray-200 bg-white"
                 sandbox="allow-scripts"
               />
             </div>
+            </section>
           </div>
         </div>
+          </>
+        )}
 
-        {/* Batches preview (always visible when recipients exist) */}
+        {/* Delivery pace & batch plan */}
         {batchPreview.length > 0 && (
-          <div className="border rounded p-3 bg-white space-y-2" id="tutorial-batch-preview">
-            <div className="text-sm font-medium flex items-center gap-2">
-              <span>Batches (preview)</span>
-              <span className="text-xs opacity-70">
-                {batchPreview.length} total
+        <section className="card p-4 space-y-3" id="tutorial-batch-preview">
+            <div className="text-sm font-medium flex items-center gap-2 flex-wrap">
+              <span>Delivery pace</span>
+              <span className="text-xs font-normal text-gray-600">
+                {batchPreview.length} batch{batchPreview.length !== 1 ? "es" : ""} ·{" "}
+                {recipients.length} recipient{recipients.length !== 1 ? "s" : ""}
               </span>
             </div>
             {/* Batch size selector */}
@@ -902,7 +758,7 @@ export default function PreviewPane({
                         value={size}
                         checked={batchSize === size}
                         onChange={() => setBatchSize(size)}
-                        className="accent-gray-800"
+                        className="accent-[#049fd9]"
                         disabled={disabled}
                       />
                       <span>{size}</span>
@@ -930,11 +786,15 @@ export default function PreviewPane({
                 )}
               </div>
             </div>
-            <div className="max-h-48 overflow-auto text-xs bg-gray-50 border rounded">
-              <ul className="divide-y">
+            <details className="text-xs">
+              <summary className="cursor-pointer select-none font-medium text-gray-700 hover:text-[#0071a4] dark:hover:text-[#7dd3fc]">
+                View batch breakdown
+              </summary>
+              <div className="mt-2 max-h-48 overflow-auto bg-gray-50 border border-gray-200 rounded-md">
+              <ul className="divide-y divide-gray-200">
                 {batchPreview.map((b) => (
                   <li key={`batch-${b.batch}`} className="px-3 py-2 space-y-1">
-                    <div className="font-medium">Batch {b.batch}</div>
+                    <div className="font-medium text-gray-800">Batch {b.batch}</div>
                     <div className="text-gray-700 space-y-1">
                       {b.recipients.map((email) => {
                         const attachments = attachmentsByRecipient.get(email) || [];
@@ -966,53 +826,113 @@ export default function PreviewPane({
                   </li>
                 ))}
               </ul>
-            </div>
+              </div>
+            </details>
             <div className="text-[11px] text-gray-600">
-              Sending is performed sequentially per batch with a jittered ~2s
-              delay per email to reduce throttling and avoid serverless
-              timeouts.
+              Emails are sent sequentially with a jittered ~2s delay per email to
+              reduce throttling and avoid serverless timeouts.
             </div>
-          </div>
+          </section>
         )}
-      </div>
-      {showPaste && systemVariant === "default" && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded shadow-lg w-full max-w-lg p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium">Paste .env content</h3>
-              <button
-                onClick={() => setShowPaste(false)}
-                className="text-xs px-2 py-1 border rounded"
-              >
-                Close
-              </button>
-            </div>
-            <textarea
-              value={pasteValue}
-              onChange={(e) => setPasteValue(e.target.value)}
-              rows={8}
-              className="w-full border rounded p-2 text-xs font-mono"
-              placeholder="SENDER_EMAIL=you@example.com\nSENDER_APP_PASSWORD=app-password\nSENDER_NAME=Your Name"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowPaste(false)}
-                className="px-3 py-1 border rounded text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitPaste}
-                disabled={uploading}
-                className="px-3 py-1 border rounded text-sm bg-green-600 text-white disabled:opacity-50"
-              >
-                Save
-              </button>
-            </div>
+
+        {/* Action bar */}
+        <section
+          className={`card p-3 flex flex-wrap items-center justify-between gap-3 ${
+            ready ? "sticky bottom-4 z-30 shadow-lg" : ""
+          }`}
+        >
+          <p className="text-sm min-w-0">
+            {ready ? (
+              <>
+                <span className="font-semibold text-gray-900">
+                  Ready to send {recipients.length} email
+                  {recipients.length !== 1 ? "s" : ""}
+                </span>{" "}
+                <span className="text-gray-600">
+                  in {batchPreview.length} batch
+                  {batchPreview.length !== 1 ? "es" : ""} as {SENDER_LABEL}.
+                </span>
+              </>
+            ) : (
+              <span className="text-gray-600">{sendBlocker}</span>
+            )}
+          </p>
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              type="button"
+              disabled={!ready}
+              onClick={() => ready && onExportJson((row) => renderRow(row))}
+              title={ready ? undefined : "Finish the steps above first"}
+              className={`px-4 py-2 rounded-md border text-sm font-medium ${
+                ready
+                  ? "border-[#0d274d] dark:border-[#38bdf8] text-[#0d274d] dark:text-[#7dd3fc] bg-white hover:bg-[#ebf6fc] dark:bg-transparent"
+                  : "border-gray-200 text-gray-500 opacity-60 cursor-not-allowed"
+              }`}
+            >
+              Export JSON
+            </button>
+            <button
+              type="button"
+              disabled={!canSend}
+              onClick={() => {
+                if (!canSend || !csv || !mapping) return;
+                try {
+                  setShowConfirmModal(true);
+                } catch (e) {
+                  alert(`Send error: ${(e as Error).message}`);
+                }
+              }}
+              title={
+                !ready
+                  ? sendBlocker || undefined
+                  : envOk === false
+                  ? "Resolve sender credentials first"
+                  : undefined
+              }
+              className={`px-5 py-2 rounded-md text-sm font-semibold text-white transition ${
+                canSend
+                  ? "bg-[#049fd9] dark:bg-[#38bdf8] border border-[#0071a4] dark:border-[#049fd9] hover:bg-[#0071a4] dark:hover:bg-[#049fd9] shadow-sm"
+                  : "bg-gray-400/70 border border-gray-300 cursor-not-allowed opacity-80"
+              } ${isSending ? "cursor-wait" : ""}`}
+            >
+              {isSending ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                  Sending…
+                </span>
+              ) : cooldownSec > 0 ? (
+                `Wait ${cooldownSec}s`
+              ) : (
+                <>
+                  Send {recipients.length} email{recipients.length !== 1 ? "s" : ""}
+                  <span aria-hidden="true" className="ml-1">
+                    →
+                  </span>
+                </>
+              )}
+            </button>
           </div>
-        </div>
-      )}
-      {/* Streaming progress UI removed */}
+        </section>
+      </div>
       {showSendModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-3xl rounded shadow-lg">
@@ -1052,7 +972,7 @@ export default function PreviewPane({
               {typeof sendModalTotal === "number" && (
                 <div className="w-full h-2 bg-gray-200 rounded">
                   <div
-                    className="h-2 bg-green-600 rounded"
+                    className="h-2 bg-[#049fd9] dark:bg-[#38bdf8] rounded"
                     style={{
                       width: `${Math.min(
                         100,
@@ -1075,7 +995,7 @@ export default function PreviewPane({
                       <div
                         key={idx}
                         className={`flex gap-2 items-start ${
-                          idx === currentBatchIndex ? "text-green-700" : ""
+                          idx === currentBatchIndex ? "text-[#0071a4] dark:text-[#7dd3fc] font-medium" : ""
                         }`}
                       >
                         <span className="min-w-[60px] inline-block">
@@ -1174,20 +1094,18 @@ export default function PreviewPane({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded shadow-lg w-full max-w-md p-5 space-y-4">
             <div className="flex items-center gap-3">
-              {variantLogo && (
-                <Image
-                  src={variantLogo}
-                  alt={variantLabel}
-                  width={64}
-                  height={32}
-                  className="h-8 w-auto rounded border"
-                />
-              )}
+              <Image
+                src="/cisco-logo.jpg"
+                alt="Cisco"
+                width={64}
+                height={32}
+                className="h-8 w-auto rounded border border-gray-200 bg-white p-px"
+              />
               <h3 className="text-sm font-medium">Confirm Send</h3>
             </div>
             <p className="text-sm">
-              You are using <strong>{variantLabel}</strong> credentials to send
-              these emails. Are you sure you want to proceed?
+              You are using the <strong>{SENDER_LABEL}</strong> sender identity
+              to send these emails. Are you sure you want to proceed?
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <button
@@ -1202,7 +1120,7 @@ export default function PreviewPane({
                   setShowConfirmModal(false);
                   await doSendEmails();
                 }}
-                className="px-3 py-1 border rounded text-sm bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+                className="px-3 py-1 border rounded text-sm bg-[#049fd9] dark:bg-[#38bdf8] border-[#0071a4] dark:border-[#049fd9] text-white hover:bg-[#0071a4] dark:hover:bg-[#049fd9] disabled:opacity-50"
                 disabled={isSending}
               >
                 {isSending ? "Sending…" : "Yes, Send"}

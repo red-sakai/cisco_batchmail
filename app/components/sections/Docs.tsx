@@ -5,9 +5,9 @@ export default function Docs() {
     <div className="prose max-w-none">
       <h1>BatchMail Documentation</h1>
       <p>
-        BatchMail helps you bulk‑send personalized HTML emails: upload a CSV,
-        author a Jinja‑style template, preview & validate, then send or export
-        JSON.
+        BatchMail is the bulk email tool of <strong>Cisco NetConnect PUP – Manila</strong>.
+        Upload a recipient CSV, author a Jinja-style HTML template, preview &amp;
+        validate, then send as the CNCP sender identity.
       </p>
 
       <h2 className="mt-8">Quick Start</h2>
@@ -21,53 +21,48 @@ export default function Docs() {
           using <code>{"{{ variable }}"}</code>.
         </li>
         <li>
-          <strong>Preview &amp; Export Tab:</strong> Provide a dynamic subject,
-          verify environment, export or send.
+          <strong>Preview &amp; Send Tab:</strong> Provide a dynamic subject,
+          confirm the sender credentials check, then send.
         </li>
       </ol>
       <hr className="my-6" />
 
-      <h2 className="mt-8">Environment Variables</h2>
+      <h2 className="mt-8">Sender Credentials (CISCO_*)</h2>
       <p>
-        Create or upload a <strong>.env</strong> (or paste text) containing:
+        The app sends through the Cisco NetConnect PUP – Manila Gmail account.
+        Set these keys in a <strong>.env.local</strong> file at the project root,
+        then restart the server:
       </p>
       <pre className="whitespace-pre-wrap break-word">
         <code>
-          # .env SENDER_EMAIL=you@example.com
-          SENDER_APP_PASSWORD=your-app-password SENDER_NAME=Your Display Name
-
-          # System variants can also use prefixed env keys, e.g.
-          # SHAIKAH_SENDER_EMAIL=you@example.com
-          # SHAIKAH_SENDER_APP_PASSWORD=your-app-password
-          # SHAIKAH_SENDER_NAME=Your Display Name
-          # Lowercase shaikah_sender_* keys are also accepted.
+          {`CISCO_SENDER_EMAIL=netconnect.pup@gmail.com
+CISCO_SENDER_PASSWORD=your-app-password
+CISCO_SENDER_NAME=Cisco NetConnect PUP - Manila`}
         </code>
       </pre>
       <ul>
         <li>
-          <strong>SENDER_EMAIL</strong> – Mailbox you will send from.
+          <strong>CISCO_SENDER_EMAIL</strong> – CNCP mailbox you will send from.
         </li>
         <li>
-          <strong>SENDER_APP_PASSWORD</strong> – Provider generated app password
-          (e.g. Gmail).
+          <strong>CISCO_SENDER_PASSWORD</strong> – Gmail App Password (aliases:{" "}
+          <code>CISCO_SENDER_APP_PASSWORD</code> and lowercase variants).
         </li>
         <li>
-          <strong>SENDER_NAME</strong> – Friendly display name.
-        </li>
-        <li>
-          <strong>SHAIKAH_SENDER_EMAIL / SHAIKAH_SENDER_APP_PASSWORD / SHAIKAH_SENDER_NAME</strong> – System env option for the Shaikah sender profile.
+          <strong>CISCO_SENDER_NAME</strong> – Friendly display name shown to
+          recipients.
         </li>
       </ul>
       <p>
-        <strong>Note:</strong> Uploaded env values are stored in memory only;
-        restarting the server clears them.
+        <strong>Note:</strong> Credentials are read from the server environment
+        only; nothing is uploaded or stored by this UI.
       </p>
 
       <h2 className="mt-8">CSV Requirements</h2>
       <p>
         Required headers: an email address column and a name column. Add any
-        number of extra personalization columns (e.g. <code>amount</code>,{" "}
-        <code>company</code>, <code>plan</code>).
+        number of extra personalization columns (e.g. <code>event</code>,{" "}
+        <code>school</code>, <code>certificate_id</code>).
       </p>
       <p>
         You can edit any cell inline by double‑clicking, add/remove columns, and
@@ -76,9 +71,9 @@ export default function Docs() {
       <h3>Example CSV</h3>
       <pre className="whitespace-pre-wrap break-word">
         <code>
-          # recipient,name,... headers on first row
-          recipient,name,amount,segment alice@example.com,Alice,125,referral
-          bob@example.com,Bob,300,retargeting
+          {`recipient,name,event,school
+alice@example.com,Alice,Cisco Day 2026,PUP Manila
+bob@example.com,Bob,Cisco Day 2026,PUP San Pedro`}
         </code>
       </pre>
 
@@ -87,7 +82,7 @@ export default function Docs() {
         Write standard HTML. Use Jinja/Handlebars‑like syntax for variables:
       </p>
       <pre className="whitespace-pre-wrap break-word">
-        <code>{`<p>Hello {{ name }}, your invoice total is {{ amount }}.</p>`}</code>
+        <code>{`<p>Hello {{ name }}, welcome to {{ event }}!</p>`}</code>
       </pre>
       <p>Available variables:</p>
       <ul>
@@ -95,13 +90,13 @@ export default function Docs() {
           <code>{"{{ name }}"}</code>, <code>{"{{ recipient }}"}</code>
         </li>
         <li>
-          Every CSV header (e.g. <code>{"{{ amount }}"}</code>,{" "}
-          <code>{"{{ segment }}"}</code>)
+          Every CSV header (e.g. <code>{"{{ event }}"}</code>,{" "}
+          <code>{"{{ school }}"}</code>)
         </li>
       </ul>
       <p>
         Logic, filters, loops, etc. supported by Nunjucks can be added if needed
-        (<code>{`{% if amount > 200 %}VIP{% endif %}`}</code>).
+        (<code>{`{% if school %}...{% endif %}`}</code>).
       </p>
 
       <h2 className="mt-8">Subject Line</h2>
@@ -111,7 +106,7 @@ export default function Docs() {
         CSV, that column’s value is used.
       </p>
       <pre className="whitespace-pre-wrap break-word">
-        <code>{`Invoice for {{ name }} - Total {{ amount }}`}</code>
+        <code>{`Your {{ event }} Certificate - Cisco NetConnect PUP`}</code>
       </pre>
 
       <h2 className="mt-8">Validation & Variable Checks</h2>
@@ -120,6 +115,22 @@ export default function Docs() {
         names exactly matching CSV headers.
       </p>
 
+      <h2 className="mt-8">Attachments & Batching</h2>
+      <ul>
+        <li>
+          Attachment file names must match the CSV <strong>Name</strong> column
+          (diacritic-safe, case-insensitive).
+        </li>
+        <li>
+          With attachments, batches are capped at <strong>3 emails</strong>;
+          large 1–2&nbsp;MB PDFs lock batches to <strong>1 email</strong>.
+        </li>
+        <li>
+          Without attachments you can send up to <strong>4 per batch</strong>.
+          Emails are paced ~2s apart to avoid throttling.
+        </li>
+      </ul>
+
       <h2 className="mt-8">Export JSON</h2>
       <p>Generates an array of rendered objects:</p>
       <pre className="whitespace-pre-wrap break-word">
@@ -127,7 +138,7 @@ export default function Docs() {
   {
     "to": "alice@example.com",
     "name": "Alice",
-    "subject": "Invoice for Alice - Total 125",
+    "subject": "Cisco Day 2026",
     "html": "<p>Hello Alice...</p>"
   }
 ]`}</code>
@@ -135,16 +146,13 @@ export default function Docs() {
 
       <h2 className="mt-8">Sending Emails</h2>
       <ol>
-        <li>Upload/paste env and ensure the status badge shows success.</li>
-        <li>Review recipient count and any warnings.</li>
+        <li>Confirm the sender badge shows “Sender credentials OK”.</li>
+        <li>Review recipient count and batch grouping warnings.</li>
         <li>
-          Click <strong>Send Emails</strong>. Progress and logs stream live.
+          Click <strong>Send Emails</strong> and confirm the CNCP sender
+          prompt. Progress and logs stream live.
         </li>
       </ol>
-      <p>
-        For large lists, consider batching (future roadmap) to reduce rate‑limit
-        risk.
-      </p>
 
       <h2 className="mt-8">Safety & Sanitization</h2>
       <p>
@@ -155,12 +163,12 @@ export default function Docs() {
       <h2 className="mt-8">Troubleshooting</h2>
       <ul>
         <li>
-          <strong>Missing env:</strong> Reupload/paste ensuring all three keys
-          exist.
+          <strong>Missing CISCO_* env:</strong> Ask the tool administrator to
+          set the three keys in .env.local and restart the server.
         </li>
         <li>
-          <strong>Auth failures:</strong> Verify correct app password & provider
-          requirements (e.g. Gmail App Password with 2FA).
+          <strong>Auth failures:</strong> Verify the Gmail App Password is valid
+          and 2FA is enabled on the account.
         </li>
         <li>
           <strong>Unknown variable:</strong> Check spelling; confirm the header
@@ -170,22 +178,14 @@ export default function Docs() {
 
       <h2 className="mt-8">Advanced Template Example</h2>
       <pre className="whitespace-pre-wrap break-word">
-        <code>{`<html>\n  <body>\n    <h2>Account Summary for {{ name }}</h2>\n    {% if amount %}<p>Your total due: \${{ amount }}.</p>{% endif %}\n    <p>Segment: {{ segment | default('n/a') }}</p>\n    {% if amount and amount > 250 %}<p><strong>VIP Thank You!</strong></p>{% endif %}\n  </body>\n</html>`}</code>
+        <code>{`<html>\n  <body>\n    <h2>Hello {{ name }}!</h2>\n    {% if event %}<p>You're registered for {{ event }}.</p>{% endif %}\n    <p>School: {{ school | default('PUP Manila') }}</p>\n  </body>\n</html>`}</code>
       </pre>
 
       <h2 className="mt-8">Security Notes</h2>
       <p>
-        No secrets are persisted beyond memory. For production use, add
-        encrypted storage, audit logging, and rate limiting.
+        No secrets are handled client-side. For production use, add encrypted
+        storage, audit logging, and rate limiting at the server layer.
       </p>
-
-      <h2 className="mt-8">Roadmap</h2>
-      <ul>
-        <li>Template versioning & server persistence</li>
-        <li>Batch sending + retry / backoff</li>
-        <li>Dry‑run full preview per recipient</li>
-        <li>Role‑based access & audit logs</li>
-      </ul>
     </div>
   );
 }

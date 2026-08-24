@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BatchMail",
-  description: "Automated emailer",
+  title: "BatchMail · Cisco NetConnect PUP – Manila",
+  description:
+    "BatchMail for Cisco NetConnect PUP – Manila. Upload a CSV, personalize an HTML template, preview, and send bulk emails.",
 };
 
 export default function RootLayout({
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="site-backdrop" aria-hidden="true" />
         {children}
       </body>
     </html>

@@ -227,13 +227,13 @@ export default function TemplateLibrary({
       {/* Editor */}
       <div className="lg:col-span-2 space-y-4">
         {applied && (
-          <div className="rounded-md border border-green-200 bg-green-50 text-green-800 px-3 py-2 text-sm flex items-center justify-between">
+          <div className="rounded-md border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] text-[#0d274d] dark:text-[#eaf2fa] px-3 py-2 text-sm flex items-center justify-between">
             <span>
               Template applied. You can head to the{" "}
               <strong>Preview &amp; Export</strong> tab to review and send.
             </span>
             <button
-              className="px-2 py-1 text-xs rounded border border-green-300 bg-white hover:bg-green-100"
+              className="px-2 py-1 text-xs rounded border border-[#049fd9]/40 dark:border-[#38bdf8]/40 bg-white hover:bg-[#ebf6fc] dark:bg-[#10263f]"
               onClick={() => {
                 const usp = new URLSearchParams(
                   Array.from(searchParams.entries())
@@ -281,7 +281,7 @@ export default function TemplateLibrary({
             </button>
             <button
               type="button"
-              className="px-3 py-1 rounded border border-green-600 text-sm bg-green-600 text-white hover:bg-green-700"
+              className="px-3 py-1 rounded border border-[#0071a4] dark:border-[#049fd9] text-sm bg-[#049fd9] dark:bg-[#38bdf8] text-white hover:bg-[#0071a4] dark:hover:bg-[#049fd9]"
               onClick={() => {
                 onUseTemplate({ html: active.html });
                 setApplied(true);
@@ -384,7 +384,7 @@ export default function TemplateLibrary({
                 onKeyDown={(e) => handleRawKeyDown(e, active.html, updateActive)}
                 rows={22}
                 spellCheck={false}
-                  className="w-full min-h-[26rem] rounded-lg border border-slate-800 bg-slate-950 text-slate-100 font-mono shadow-inner focus:outline-none focus:ring-2 focus:ring-green-500 px-4 py-4"
+                  className="w-full min-h-[26rem] rounded-lg border border-slate-800 bg-slate-950 text-slate-100 font-mono shadow-inner focus:outline-none focus:ring-2 focus:ring-[#049fd9] px-4 py-4"
                   style={{
                     fontSize: `${(rawZoom * BASE_RAW_FONT_SIZE).toFixed(2)}px`,
                     lineHeight: `${(rawZoom * BASE_RAW_LINE_HEIGHT).toFixed(2)}px`,

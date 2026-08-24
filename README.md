@@ -1,6 +1,6 @@
 ## BatchMail UI
 
-BatchMail provides an interface for generating personalized email HTML bodies from a CSV file and a Jinja-style HTML template (rendered client-side with Nunjucks).
+BatchMail provides an interface for generating personalized email HTML bodies from a CSV file and a Jinja-style HTML template (rendered client-side with Nunjucks). This deployment is tailored exclusively for the **Cisco NetConnect PUP – Manila** sender identity.
 
 ### Features
 
