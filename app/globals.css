@@ -412,6 +412,32 @@ body {
 .dark .email-editor-surface a { color: #049fd9 !important; }
 .dark .email-editor-surface button { color: #111827 !important; }
 
+/* Tailwind preflight strips list markers; restore them inside the editor
+   so the bulleted/numbered list buttons produce visible output. */
+.email-editor-surface ul,
+.email-editor-surface ol {
+  margin: 0.25rem 0;
+  padding-left: 1.5rem;
+}
+.email-editor-surface ul {
+  list-style-type: disc;
+}
+.email-editor-surface ul ul {
+  list-style-type: circle;
+}
+.email-editor-surface ul ul ul {
+  list-style-type: square;
+}
+.email-editor-surface ol {
+  list-style-type: decimal;
+}
+.email-editor-surface ol ol {
+  list-style-type: lower-alpha;
+}
+.email-editor-surface ol ol ol {
+  list-style-type: lower-roman;
+}
+
 /* Brand scrollbar accents */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ParsedCsv, CsvMapping } from "./CsvUploader";
+import { deriveColumnHref, isLinkColumn } from "@/lib/links";
 
 type Props = {
   csv: ParsedCsv | null;
@@ -27,6 +28,17 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
     );
     return filtered.slice(0, limit);
   }, [csv, q, limit]);
+
+  const linkColumns = useMemo(() => {
+    const set = new Set<string>();
+    if (!csv) return set;
+    const sample = (csv.rows as Array<Record<string, string>>).slice(0, 200);
+    for (const h of csv.headers) {
+      const values = sample.map((r) => String(r[h] ?? ""));
+      if (isLinkColumn(h, values)) set.add(h);
+    }
+    return set;
+  }, [csv]);
 
   if (!csv) return <div className="text-sm opacity-80">No CSV loaded.</div>;
 
@@ -146,7 +158,30 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
               {csv.headers.map((h) => (
                 <th key={h} className="px-3 py-2 border border-gray-200 text-left font-semibold bg-gray-50 min-w-[140px]">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate" title={h}>{h}</span>
+                    <span className="flex items-center gap-1.5 min-w-0">
+                      <span className="truncate" title={h}>{h}</span>
+                      {linkColumns.has(h) && (
+                        <span
+                          title="Link column: values in this column are clickable links"
+                          className="inline-flex flex-none items-center gap-1 rounded border border-[#049fd9]/40 bg-[#ebf6fc] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#0071a4] dark:border-[#38bdf8]/40 dark:bg-[#10263f] dark:text-[#7dd3fc]"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-3 w-3"
+                            aria-hidden="true"
+                          >
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                          </svg>
+                          link
+                        </span>
+                      )}
+                    </span>
                     <button
                       type="button"
                       onClick={() => deleteColumn(h)}
@@ -192,6 +227,11 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
               <tr key={i} className="odd:bg-white even:bg-gray-50 hover:bg-[#ebf6fc]/60 dark:bg-[#10263f]/60">
                 {csv.headers.map((h) => {
                   const isEditing = editingCell && editingCell.row === i && editingCell.header === h;
+                  const rawValue = String(row[h] ?? "");
+                  const linkHref =
+                    !isEditing && linkColumns.has(h)
+                      ? deriveColumnHref(rawValue)
+                      : null;
                   return (
                     <td
                       key={h}
@@ -212,6 +252,15 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                           }}
                           className="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
                         />
+                      ) : linkHref ? (
+                        <a
+                          href={linkHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="whitespace-pre-wrap break-words text-[13px] leading-snug text-[#0071a4] underline underline-offset-2 hover:text-[#049fd9] dark:text-[#7dd3fc] dark:hover:text-[#38bdf8]"
+                        >
+                          {rawValue}
+                        </a>
                       ) : (
                         <span className="whitespace-pre-wrap break-words text-[13px] leading-snug">{row[h]}</span>
                       )}

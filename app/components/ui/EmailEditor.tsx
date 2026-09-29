@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import createDOMPurify from "dompurify";
+import { deriveHref } from "@/lib/links";
 
 type Props = {
   value: string;
@@ -178,6 +179,95 @@ function EmailEditorInner(
     ref.current?.focus();
   };
 
+  // Keep the caret/selection inside the editor when toolbar buttons are clicked.
+  const keepSelection = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
+
+  const getEditorRange = (): Range | null => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return null;
+    const range = sel.getRangeAt(0);
+    if (!ref.current || !ref.current.contains(range.commonAncestorContainer)) {
+      return null;
+    }
+    return range.cloneRange();
+  };
+
+  const closestAnchor = (range: Range | null): HTMLAnchorElement | null => {
+    let node: Node | null = range?.startContainer ?? null;
+    while (node && node !== ref.current) {
+      if (node instanceof HTMLAnchorElement) return node;
+      node = node.parentNode;
+    }
+    return null;
+  };
+
+  const restoreRange = (range: Range | null) => {
+    if (!range) return;
+    ref.current?.focus();
+    const sel = window.getSelection();
+    if (!sel) return;
+    sel.removeAllRanges();
+    sel.addRange(range);
+  };
+
+  const normalizeUrl = (raw: string): string | null => {
+    const value = raw.trim();
+    if (!value || /\s/.test(value)) return null;
+    const derived = deriveHref(value);
+    if (derived) return derived;
+    if (/^[a-zA-Z][\d+\-.a-zA-Z]*:/.test(value)) return value;
+    return `https://${value}`;
+  };
+
+  const applyLink = () => {
+    const range = getEditorRange();
+    const anchor = closestAnchor(range);
+    if (!range && !anchor) {
+      window.alert("Click inside the message and select the text to link.");
+      return;
+    }
+    const selectedText = range && !range.collapsed ? range.toString() : "";
+    const prefill =
+      anchor?.getAttribute("href") ||
+      deriveHref(selectedText) ||
+      (selectedText ? "" : "https://");
+    const input = window.prompt("Link URL", prefill);
+    if (input === null) return;
+    const href = normalizeUrl(input);
+    if (!href) {
+      if (input.trim()) {
+        window.alert("That doesn't look like a valid URL.");
+      }
+      return;
+    }
+    restoreRange(range);
+    if (anchor) {
+      anchor.setAttribute("href", href);
+      notify({ immediate: true });
+      return;
+    }
+    if (range?.collapsed) {
+      document.execCommand(
+        "insertHTML",
+        false,
+        `<a href="${escapeAttribute(href)}">${escapeText(href)}</a>`
+      );
+    } else {
+      document.execCommand("createLink", false, href);
+    }
+    notify({ immediate: true });
+  };
+
+  const removeLink = () => {
+    const range = getEditorRange();
+    if (!closestAnchor(range)) return;
+    restoreRange(range);
+    document.execCommand("unlink");
+    notify({ immediate: true });
+  };
+
   useImperativeHandle(refForward, () => ({ insertVariable, focus }));
 
   return (
@@ -188,6 +278,7 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs disabled:opacity-50"
+            onMouseDown={keepSelection}
             onClick={undo}
             disabled={!historyState.canUndo}
             title="Undo (Ctrl+Z)"
@@ -197,6 +288,7 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs disabled:opacity-50"
+            onMouseDown={keepSelection}
             onClick={redo}
             disabled={!historyState.canRedo}
             title="Redo (Ctrl+Shift+Z)"
@@ -208,6 +300,7 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
             onClick={() => exec("bold")}
           >
             Bold
@@ -215,6 +308,7 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
             onClick={() => exec("italic")}
           >
             Italic
@@ -222,6 +316,7 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
             onClick={() => exec("underline")}
           >
             Underline
@@ -229,16 +324,40 @@ function EmailEditorInner(
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
             onClick={() => exec("insertUnorderedList")}
+            title="Bulleted list"
           >
             • List
           </button>
           <button
             type="button"
             className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
             onClick={() => exec("insertOrderedList")}
+            title="Numbered list"
           >
             1. List
+          </button>
+        </div>
+        <div className="inline-flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
+            onClick={applyLink}
+            title="Turn the selected text into a link"
+          >
+            Link
+          </button>
+          <button
+            type="button"
+            className="px-2 py-1 border rounded text-xs"
+            onMouseDown={keepSelection}
+            onClick={removeLink}
+            title="Remove the link from the selected text"
+          >
+            Unlink
           </button>
         </div>
       </div>
@@ -272,10 +391,8 @@ const syncAnchorHrefs = (root: HTMLElement) => {
   });
 };
 
-const deriveHref = (value: string) => {
-  if (/^https?:\/\//i.test(value)) return value;
-  if (/^mailto:/i.test(value)) return value;
-  if (/^www\./i.test(value)) return `https://${value}`;
-  if (/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$/i.test(value)) return `mailto:${value}`;
-  return null;
-};
+const escapeAttribute = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+const escapeText = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
