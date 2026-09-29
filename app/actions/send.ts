@@ -1,6 +1,7 @@
 "use server";
 
 import { normalizeNameKey } from "@/lib/normalizeName";
+import { autoLinkifyHtml } from "@/lib/links";
 import nodemailer from "nodemailer";
 import nunjucks from "nunjucks";
 import { DEFAULT_VARIANT, getEnvForVariant } from "@/lib/envStore";
@@ -48,7 +49,7 @@ function renderTemplate(
   let body = html;
   let subj = subject;
   try {
-    body = nunjucks.renderString(html, ctx);
+    body = autoLinkifyHtml(nunjucks.renderString(html, ctx));
   } catch {}
   if (subject) {
     try {

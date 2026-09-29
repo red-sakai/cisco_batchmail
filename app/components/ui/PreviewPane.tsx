@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 import type { CsvMapping, ParsedCsv } from "./CsvUploader";
+import { autoLinkifyHtml } from "@/lib/links";
 // email editing is performed in the Template tab
 import type { AttachIndex } from "./AttachmentsUploader";
 import VariablePicker from "./VariablePicker";
@@ -193,8 +194,9 @@ export default function PreviewPane({
       ctx.name = row[mapping.name];
       ctx.recipient = row[mapping.recipient];
       try {
-        // Render using nunjucks (Jinja compatible)
-        return nunjucks.renderString(template, ctx);
+        // Render using nunjucks (Jinja compatible), then wrap bare URLs so
+        // values like {{ link }} come out clickable in the preview.
+        return autoLinkifyHtml(nunjucks.renderString(template, ctx));
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         return `<!-- Render error: ${msg} -->\n` + template;
@@ -718,7 +720,7 @@ export default function PreviewPane({
                 srcDoc={previewHtml}
                 title="Email preview"
                 className="w-full h-96 rounded-md border border-gray-200 bg-white"
-                sandbox="allow-scripts"
+                sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
               />
             </div>
             </section>
