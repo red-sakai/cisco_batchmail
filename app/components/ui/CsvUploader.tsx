@@ -2,6 +2,7 @@
 
 import Papa from "papaparse";
 import { useRef, useState, useCallback } from "react";
+import Icon from "./Icon";
 
 export type ParsedCsv = {
   headers: string[];
@@ -158,14 +159,14 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
   }, []);
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4 space-y-4">
+    <div className="card p-4 sm:p-5 space-y-4">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">1) Upload CSV or Add Manually</h2>
-            <p className="text-sm opacity-80">Provide a CSV with a header row, drag & drop, or add recipients manually.</p>
+            <h2 className="text-lg font-semibold">Upload CSV or add manually</h2>
+            <p className="text-sm text-muted">Provide a CSV with a header row, drag &amp; drop, or add recipients manually.</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <input
               ref={fileRef}
               id="csv-file-input"
@@ -175,20 +176,21 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                 const file = e.target.files?.[0];
                 if (file) handleFile(file);
               }}
-              className="sr-only"
+              className="peer sr-only"
             />
             <label
               htmlFor="csv-file-input"
-              className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm cursor-pointer hover:bg-gray-50 focus-within:ring-2 focus-within:ring-[#049fd9]"
+              className={`btn ${csv ? "" : "btn-primary"} peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent-ink`}
             >
-              <span className="inline-block">{fileName || "Choose CSV"}</span>
+              <span className="inline-block max-w-48 truncate">{fileName || "Choose CSV"}</span>
             </label>
             <button
               type="button"
               onClick={initializeManualEntry}
-              className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50"
+              className="btn"
             >
-              + Add Manually
+              <Icon name="plus" />
+              Add manually
             </button>
             {csv && (
               <button
@@ -202,41 +204,44 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                   setShowManualEntry(false);
                   setManualRow({});
                 }}
-                className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50"
+                className="btn"
               >
                 Reset
               </button>
             )}
           </div>
         </div>
-        <div
+        <label
+          htmlFor="csv-file-input"
           onDragEnter={onDrag}
           onDragOver={onDrag}
           onDragLeave={onDrag}
           onDrop={onDrop}
-          className={`group relative rounded-md border border-dashed p-6 text-center transition-colors ${dragActive ? "border-[#049fd9] bg-[#ebf6fc] dark:bg-[#10263f]" : "border-gray-200"}`}
+          data-active={dragActive}
+          className="dropzone"
         >
-          <p className="text-sm">{dragActive ? "Release to upload CSV" : "Drag & drop your recipient CSV here, or use the buttons above."}</p>
-        </div>
+          <Icon name="upload" className="h-6 w-6" />
+          <span className="text-sm">{dragActive ? "Release to upload CSV" : "Drag & drop your recipient CSV here, or click to browse."}</span>
+        </label>
       </div>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {error && <div role="alert" className="notice notice-danger">{error}</div>}
 
       {/* Manual Entry Table */}
       {showManualEntry && (
         <div className="space-y-3">
-          <div className="overflow-x-auto border border-gray-200 rounded-lg">
+          <div className="overflow-x-auto border border-line rounded-lg">
             <table className="w-full text-sm">
               <tbody>
                 {/* Existing rows */}
                 {csv?.rows.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="border-b border-gray-200">
+                  <tr key={rowIndex} className="border-b border-line">
                     {(csv?.headers || DEFAULT_HEADERS).map((header) => (
-                      <td key={header} className="px-3 py-2 text-gray-900 border-r border-gray-200 last:border-r-0">
+                      <td key={header} className="px-3 py-2 border-r border-line last:border-r-0">
                         {row[header] || ""}
                       </td>
                     ))}
-                    <td className="px-3 py-2 text-right border-l border-gray-200">
+                    <td className="px-3 py-2 text-right border-l border-line">
                       <button
                         type="button"
                         onClick={() => {
@@ -249,7 +254,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                           setCsv(parsed);
                           if (mapping) onParsed({ csv: parsed, mapping });
                         }}
-                        className="rounded border border-gray-200 bg-white px-2 py-1 text-xs font-medium hover:bg-gray-50"
+                        className="btn btn-sm btn-danger"
                       >
                         Delete
                       </button>
@@ -259,13 +264,13 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                 {/* Input row for adding new entry */}
                 <tr>
                   {(csv?.headers || DEFAULT_HEADERS).map((header) => (
-                    <td key={header} className="px-3 py-2 border-r border-gray-200 last:border-r-0">
+                    <td key={header} className="px-3 py-2 border-r border-line last:border-r-0">
                       <input
                         type={header.toLowerCase().includes("email") ? "email" : "text"}
                         value={manualRow[header] || ""}
                         onChange={(e) => setManualRow((prev) => ({ ...prev, [header]: e.target.value }))}
                         placeholder={header.toLowerCase().includes("email") ? "email@example.com" : `Enter ${header}`}
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+                        className="input w-full min-w-36"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -275,21 +280,22 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
                       />
                     </td>
                   ))}
-                  <td className="px-3 py-2 border-l border-gray-200">
+                  <td className="px-3 py-2 border-l border-line">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         type="button"
                         onClick={cancelManualEntry}
-                        className="rounded border border-gray-200 bg-white px-2 py-1 text-xs font-medium hover:bg-gray-50"
+                        className="btn btn-sm"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         onClick={addManualRow}
-                        className="rounded border border-gray-200 bg-white px-2 py-1 text-xs font-medium hover:bg-gray-50"
+                        className="btn btn-sm"
                       >
-                        + Row
+                        <Icon name="plus" className="h-3 w-3" />
+                        Row
                       </button>
                     </div>
                   </td>
@@ -297,20 +303,20 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
               </tbody>
             </table>
           </div>
-          <div className="text-xs text-gray-500">
-            {csv?.rowCount ? `${csv.rowCount} recipient${csv.rowCount !== 1 ? "s" : ""} added` : "No recipients yet"} — Press Enter or click <span className="font-mono">+ Row</span> to add
+          <div className="text-xs text-subtle">
+            {csv?.rowCount ? `${csv.rowCount} recipient${csv.rowCount !== 1 ? "s" : ""} added` : "No recipients yet"} — Press Enter or click <strong className="font-semibold">Row</strong> to add
           </div>
         </div>
       )}
 
       {csv && (
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Map Columns</h3>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold">Map columns</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Recipient column</span>
+              <span className="text-xs font-medium text-muted">Recipient column</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+                className="input w-full"
                 value={mapping?.recipient || ""}
                 onChange={(e) => onChangeSelect("recipient", e.target.value)}
               >
@@ -320,9 +326,9 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
               </select>
             </label>
             <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Name column</span>
+              <span className="text-xs font-medium text-muted">Name column</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+                className="input w-full"
                 value={mapping?.name || ""}
                 onChange={(e) => onChangeSelect("name", e.target.value)}
               >
@@ -332,9 +338,9 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
               </select>
             </label>
             <label className="text-sm flex flex-col gap-1">
-              <span className="text-xs font-medium opacity-80">Subject column (optional)</span>
+              <span className="text-xs font-medium text-muted">Subject column (optional)</span>
               <select
-                className="w-full rounded-md border px-2 py-1.5 text-sm bg-white border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+                className="input w-full"
                 value={mapping?.subject || ""}
                 onChange={(e) => onChangeSelect("subject", e.target.value)}
               >
@@ -345,7 +351,7 @@ export default function CsvUploader({ onParsed, currentMapping }: Props) {
               </select>
             </label>
           </div>
-          <div className="text-xs opacity-80">Rows parsed: {csv.rowCount}</div>
+          <div className="text-xs text-subtle tabular-nums">Rows parsed: {csv.rowCount}</div>
         </div>
       )}
     </div>

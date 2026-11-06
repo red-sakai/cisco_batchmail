@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, ReactNode } from "react";
+import Icon from "./Icon";
 
 export type TabItem = {
   id: string;
   label: string;
   description?: string;
+  // Not part of the numbered sequence: sits apart at the end of the rail
+  aside?: boolean;
   content: ReactNode;
 };
 
@@ -21,35 +24,6 @@ type Props = {
   isComplete?: (id: string) => boolean;
 };
 
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      className={className ?? "h-3.5 w-3.5"}
-      aria-hidden="true"
-    >
-      <path
-        fillRule="evenodd"
-        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-      <path
-        fillRule="evenodd"
-        d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-}
-
 export default function Tabs({
   items,
   initialId,
@@ -64,6 +38,8 @@ export default function Tabs({
   };
   const [active, setActive] = useState<string>(initialId || fallbackFirst());
   const [blockedMsg, setBlockedMsg] = useState<string | null>(null);
+  const listRef = useRef<HTMLOListElement | null>(null);
+  const indicatorRef = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {
     // Only initialize once from initialId if provided and active not set
@@ -73,6 +49,27 @@ export default function Tabs({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // No dependency array: tab widths change with their subtext, not just `active`.
+  useLayoutEffect(() => {
+    const place = () => {
+      const tab = listRef.current?.querySelector<HTMLElement>('[aria-selected="true"]');
+      if (!tab || !indicatorRef.current) return;
+      indicatorRef.current.style.width = `${tab.offsetWidth}px`;
+      indicatorRef.current.style.transform = `translateX(${tab.offsetLeft}px)`;
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  });
+
+  // On narrow screens the rail scrolls sideways, so keep the current step in view.
+  useEffect(() => {
+    const tab = listRef.current?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!tab) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    listRef.current?.scrollTo({ left: tab.offsetLeft - 16, behavior: reduced ? "auto" : "smooth" });
+  }, [active]);
 
   const activate = (id: string) => {
     if (isDisabled?.(id)) {
@@ -88,11 +85,8 @@ export default function Tabs({
 
   return (
     <div className="w-full">
-      <ol
-        role="tablist"
-        aria-label="Main steps"
-        className="flex items-stretch gap-1 mb-4 overflow-x-auto pb-1"
-      >
+      <ol ref={listRef} role="tablist" aria-label="Main steps" className="rail mb-4">
+        <li ref={indicatorRef} role="presentation" className="rail-indicator" />
         {items.map((t, i) => {
           const selected = t.id === active;
           const disabled = isDisabled?.(t.id) ?? false;
@@ -104,9 +98,10 @@ export default function Tabs({
             : t.description || undefined;
 
           return (
-            <li key={t.id} className="flex items-center min-w-0">
+            <li key={t.id} role="presentation" className={`flex items-center ${t.aside ? "ml-auto" : ""}`}>
               <button
                 role="tab"
+                id={`tab-${t.id}`}
                 aria-selected={selected}
                 aria-controls={`panel-${t.id}`}
                 onClick={() => activate(t.id)}
@@ -116,43 +111,33 @@ export default function Tabs({
                     ? getDisabledTitle?.(t.id) || "This step is currently locked"
                     : undefined
                 }
-                className={`group flex items-center gap-2.5 rounded-lg px-3 py-2 text-left transition border ${
-                  selected
-                    ? "border-[#0d274d] bg-[#0d274d] shadow-sm"
-                    : "border-transparent hover:bg-gray-50"
-                } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                className="rail-tab"
               >
-                <span
-                  className={`flex h-7 w-7 flex-none items-center justify-center rounded-full text-xs font-semibold transition ${
-                    complete || selected
-                      ? "bg-[#049fd9] text-white"
-                      : "border border-gray-300 bg-white text-gray-500 group-hover:border-[#049fd9]/50"
-                  }`}
-                  aria-hidden="true"
-                >
-                  {disabled ? <LockIcon /> : i + 1}
+                <span className="rail-node" data-done={complete} aria-hidden="true">
+                  {disabled ? (
+                    <Icon name="lock" />
+                  ) : complete ? (
+                    <Icon name="check" />
+                  ) : t.aside ? (
+                    <Icon name="help" className="h-4 w-4" />
+                  ) : (
+                    i + 1
+                  )}
                 </span>
-                <span className="min-w-0 leading-tight">
-                  <span className="flex items-center gap-1 min-w-0">
-                    <span
-                      className={`truncate text-sm font-semibold ${
-                        selected ? "text-white" : "text-gray-700"
-                      }`}
-                    >
-                      {t.label}
-                    </span>
-                    {complete && (
-                      <CheckIcon
-                        className={`h-3.5 w-3.5 flex-none ${
-                          selected ? "text-[#7dd3fc]" : "text-[#049fd9]"
-                        }`}
-                      />
-                    )}
+                <span className="leading-tight">
+                  <span
+                    className={`text-sm font-semibold transition-colors ${
+                      selected
+                        ? "block text-white"
+                        : `sr-only sm:not-sr-only sm:block ${disabled ? "text-subtle" : "text-foreground"}`
+                    }`}
+                  >
+                    {t.label}
                   </span>
                   {subtext && (
                     <span
-                      className={`block truncate text-[11px] ${
-                        selected ? "text-[#c9e8f8]" : "text-gray-500"
+                      className={`hidden text-[11px] transition-colors sm:block ${
+                        selected ? "text-white/85" : "text-subtle"
                       }`}
                     >
                       {subtext}
@@ -160,23 +145,15 @@ export default function Tabs({
                   )}
                 </span>
               </button>
-              {i < items.length - 1 && (
-                <span
-                  aria-hidden="true"
-                  className={`mx-1 h-px w-6 flex-none sm:w-10 ${
-                    complete ? "bg-[#049fd9]/60" : "bg-gray-200"
-                  }`}
-                />
+              {i < items.length - 1 && !items[i + 1].aside && (
+                <span aria-hidden="true" className="rail-link ml-1" data-done={complete} />
               )}
             </li>
           );
         })}
       </ol>
       {blockedMsg && (
-        <div
-          role="status"
-          className="mb-3 text-xs px-3 py-2 rounded border border-yellow-200 bg-yellow-50 text-yellow-900"
-        >
+        <div role="status" className="notice notice-warn mb-3">
           {blockedMsg}
         </div>
       )}
@@ -185,7 +162,7 @@ export default function Tabs({
           key={t.id}
           role="tabpanel"
           id={`panel-${t.id}`}
-          aria-labelledby={t.id}
+          aria-labelledby={`tab-${t.id}`}
           hidden={t.id !== active}
           className="focus:outline-none"
         >

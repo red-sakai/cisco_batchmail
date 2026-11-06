@@ -2,7 +2,7 @@
 
 export default function Docs() {
   return (
-    <div className="prose max-w-none">
+    <div className="card docs p-5 sm:p-8">
       <h1>BatchMail Documentation</h1>
       <p>
         BatchMail is the bulk email tool of <strong>Cisco NetConnect PUP – Manila</strong>.
@@ -13,15 +13,15 @@ export default function Docs() {
       <h2 className="mt-8">Quick Start</h2>
       <ol>
         <li>
-          <strong>CSV Tab:</strong> Upload your CSV (first row must be headers).
+          <strong>Recipients:</strong> Upload your CSV (first row must be headers).
           Map required columns.
         </li>
         <li>
-          <strong>Template Tab:</strong> Upload or edit HTML. Insert variables
+          <strong>Message:</strong> Upload or edit HTML. Insert variables
           using <code>{"{{ variable }}"}</code>.
         </li>
         <li>
-          <strong>Preview &amp; Send Tab:</strong> Provide a dynamic subject,
+          <strong>Review &amp; Send:</strong> Provide a dynamic subject,
           confirm the sender credentials check, then send.
         </li>
       </ol>

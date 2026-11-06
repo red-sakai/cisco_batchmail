@@ -188,16 +188,13 @@ function PageInner() {
   const [subjectTemplate, setSubjectTemplate] = useState<string>("{{ subject }}");
   const [attachmentsByName, setAttachmentsByName] = useState<AttachIndex>({});
   const [hasSelectedTemplate, setHasSelectedTemplate] = useState<boolean>(false);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(true);
 
-
-  // Keep a derived indicator but avoid unused variable warnings.
-  const totalCount = useMemo(() => (csv?.rowCount ?? 0), [csv]);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('batchmail_dark');
-      const enabled = saved ? saved === '1' : false;
+      const enabled = saved ? saved === '1' : true;
       setDarkMode(enabled);
       if (typeof document !== 'undefined') {
         const root = document.documentElement;
@@ -232,8 +229,9 @@ function PageInner() {
       driver({
         showProgress: true,
         allowClose: true,
-        overlayOpacity: 0.55,
-        animate: true,
+        overlayColor: "#0b0618",
+        overlayOpacity: 0.6,
+        animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
         steps,
       }).drive();
     });
@@ -266,13 +264,13 @@ function PageInner() {
     <div>
       <NavbarClient darkMode={darkMode} onToggleDark={toggleDark} />
 
-      <main className="mx-auto max-w-6xl p-6 space-y-6">
-      <header className="space-y-1">
-      <h1 className="text-3xl font-semibold tracking-tight flex flex-wrap items-center gap-2">BatchMail <span className="text-xs font-medium px-2 py-1 rounded-full border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] text-[#0071a4] dark:text-[#7dd3fc]">Cisco NetConnect PUP · Manila</span></h1>
-        <p className="text-sm text-gray-800">Bulk email sender for CNCP events and announcements — follow the three steps below to upload recipients, craft your message, and send. {totalCount ? `(${totalCount} rows)` : ""}</p>
+      <main className="mx-auto max-w-6xl p-4 sm:p-6 space-y-5">
+      <header className="space-y-1 pt-2">
+      <h1 className="text-3xl font-semibold tracking-tight">BatchMail</h1>
+        <p className="text-sm text-muted">Bulk email for CNCP events and announcements.</p>
       </header>
 
-      <div id="tutorial-tabs" className="tabs-shell rounded-xl border border-gray-200 p-4 shadow-sm">
+      <div id="tutorial-tabs">
         <Tabs
           items={[
             {
@@ -285,7 +283,7 @@ function PageInner() {
                     <button
                       type="button"
                       onClick={() => startTabTutorial("csv")}
-                      className="text-xs font-semibold rounded-full border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] px-3 py-1 text-[#0071a4] dark:text-[#7dd3fc] hover:bg-[#049fd9]/10"
+                      className="btn btn-sm btn-ghost"
                     >
                       CSV Tutorial
                     </button>
@@ -330,7 +328,7 @@ function PageInner() {
                     <button
                       type="button"
                       onClick={() => startTabTutorial("template")}
-                      className="text-xs font-semibold rounded-full border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] px-3 py-1 text-[#0071a4] dark:text-[#7dd3fc] hover:bg-[#049fd9]/10"
+                      className="btn btn-sm btn-ghost"
                     >
                       Template Tutorial
                     </button>
@@ -358,7 +356,7 @@ function PageInner() {
                     <button
                       type="button"
                       onClick={() => startTabTutorial("preview")}
-                      className="text-xs font-semibold rounded-full border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] px-3 py-1 text-[#0071a4] dark:text-[#7dd3fc] hover:bg-[#049fd9]/10"
+                      className="btn btn-sm btn-ghost"
                     >
                       Preview Tutorial
                     </button>
@@ -379,13 +377,14 @@ function PageInner() {
               id: "docs",
               label: "Help",
               description: "Guides & troubleshooting",
+              aside: true,
               content: (
                 <div className="space-y-4" id="tutorial-docs">
                   <div className="flex justify-end">
                     <button
                       type="button"
                       onClick={() => startTabTutorial("docs")}
-                      className="text-xs font-semibold rounded-full border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] px-3 py-1 text-[#0071a4] dark:text-[#7dd3fc] hover:bg-[#049fd9]/10"
+                      className="btn btn-sm btn-ghost"
                     >
                       Docs Tutorial
                     </button>
@@ -431,7 +430,7 @@ function PageInner() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="p-6">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-sm text-muted">Loading...</div>}>
       <PageInner />
     </Suspense>
   );

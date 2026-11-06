@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent, Dispatch, SetStateAction } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { getTemplateAction, listTemplatesAction } from "@/app/actions/templates";
 import EmailEditor, { EmailEditorHandle } from "./EmailEditor";
 import VariablePicker from "./VariablePicker";
+import Icon from "./Icon";
 
 type SavedTemplate = {
   id: string;
@@ -65,8 +65,6 @@ export default function TemplateLibrary({
   const editorRef = useRef<EmailEditorHandle | null>(null);
   const rawTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [applied, setApplied] = useState<boolean>(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Persist on changes
   useEffect(() => {
@@ -162,31 +160,34 @@ export default function TemplateLibrary({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
       {/* Sidebar */}
-      <div className="lg:col-span-1 border border-gray-200 rounded h-full">
-        <div className="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
-          <div className="text-sm font-medium">Templates</div>
+      <div className="card lg:col-span-1 overflow-hidden lg:sticky lg:top-20">
+        <div className="px-3 py-2 border-b border-line flex items-center justify-between">
+          <div className="text-sm font-semibold">Templates</div>
           <button
-            className="w-6 h-6 rounded border border-gray-200 text-sm leading-5"
+            type="button"
+            aria-label="New template"
+            title="New template"
+            className="btn btn-sm btn-icon"
             onClick={addTemplate}
           >
-            +
+            <Icon name="plus" />
           </button>
         </div>
         <div className="max-h-96 overflow-auto text-sm">
           {serverTemplates.map((filename) => (
             <div
               key={filename}
-              className={`group flex items-center justify-between gap-2 px-3 py-2 border-b border-gray-200 hover:bg-gray-50`}
+              className="group flex items-center justify-between gap-2 px-3 py-2 border-b border-line transition-colors hover:bg-surface-2"
             >
               <button
                 onClick={() => onSelectTemplate(filename)}
-                className="flex-1 text-left"
+                className="flex-1 min-w-0 text-left"
               >
                 <div className="font-medium truncate">
                   {filename.replace(/\.html$/, "")}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
-                  HTML template
+                <div className="text-xs text-subtle truncate">
+                  Click to load a copy
                 </div>
               </button>
             </div>
@@ -194,27 +195,28 @@ export default function TemplateLibrary({
           {templates.map((t) => (
             <div
               key={t.id}
-              className={`group flex items-center justify-between gap-2 px-3 py-2 border-b border-gray-200 ${
-                t.id === active.id ? "bg-gray-50" : "hover:bg-gray-50"
+              className={`group flex items-center justify-between gap-2 px-3 py-2 border-b border-line last:border-b-0 transition-colors ${
+                t.id === active.id ? "bg-accent-soft" : "hover:bg-surface-2"
               }`}
             >
               <button
                 onClick={() => setActiveId(t.id)}
-                className="flex-1 text-left"
+                aria-current={t.id === active.id}
+                className="flex-1 min-w-0 text-left"
               >
-                <div className="font-medium truncate">
+                <div className={`font-medium truncate ${t.id === active.id ? "text-accent-ink" : ""}`}>
                   {t.name || "Untitled"}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
-                  HTML template
+                <div className="text-xs text-subtle truncate">
+                  Saved in this browser
                 </div>
               </button>
               {templates.length > 1 && (
                 <button
                   type="button"
-                  aria-label="Delete template"
+                  aria-label={`Delete template ${t.name || "Untitled"}`}
                   onClick={() => deleteTemplate(t.id)}
-                  className="opacity-60 group-hover:opacity-100 text-xs px-2 py-1 rounded border border-gray-200 bg-white hover:bg-red-50 hover:text-red-700"
+                  className="btn btn-sm btn-danger"
                 >
                   Delete
                 </button>
@@ -225,36 +227,35 @@ export default function TemplateLibrary({
       </div>
 
       {/* Editor */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="card lg:col-span-2 p-4 sm:p-5 space-y-4">
         {applied && (
-          <div className="rounded-md border border-[#049fd9]/30 dark:border-[#38bdf8]/40 bg-[#ebf6fc] dark:bg-[#10263f] text-[#0d274d] dark:text-[#eaf2fa] px-3 py-2 text-sm flex items-center justify-between">
+          <div className="notice notice-accent flex flex-wrap items-center justify-between gap-2 !text-sm">
             <span>
               Template applied. You can head to the{" "}
-              <strong>Preview &amp; Export</strong> tab to review and send.
+              <strong className="font-semibold">Review &amp; Send</strong> tab to review and send.
             </span>
             <button
-              className="px-2 py-1 text-xs rounded border border-[#049fd9]/40 dark:border-[#38bdf8]/40 bg-white hover:bg-[#ebf6fc] dark:bg-[#10263f]"
-              onClick={() => {
-                const usp = new URLSearchParams(
-                  Array.from(searchParams.entries())
-                );
-                usp.set("tab", "preview");
-                router.replace(`/?${usp.toString()}`);
-              }}
+              type="button"
+              className="btn btn-sm"
+              onClick={() =>
+                document
+                  .querySelector<HTMLButtonElement>('[role="tab"][aria-controls="panel-preview"]')
+                  ?.click()
+              }
             >
-              Go to Preview
+              Go to Review &amp; Send
             </button>
           </div>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-0.5">
-            <div className="text-lg font-medium">Template Editor</div>
-            <div className="text-xs text-gray-600">Autosave enabled</div>
+            <div className="text-lg font-semibold">Template Editor</div>
+            <div className="text-xs text-subtle">Autosave enabled</div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50"
+              className="btn"
               onClick={() =>
                 setRawMode((v) => {
                   const next = !v;
@@ -275,13 +276,13 @@ export default function TemplateLibrary({
             </button>
             <button
               onClick={saveAsNew}
-              className="px-3 py-1 border border-gray-200 rounded text-sm bg-white hover:bg-gray-50"
+              className="btn"
             >
               Save as new Template
             </button>
             <button
               type="button"
-              className="px-3 py-1 rounded border border-[#0071a4] dark:border-[#049fd9] text-sm bg-[#049fd9] dark:bg-[#38bdf8] text-white hover:bg-[#0071a4] dark:hover:bg-[#049fd9]"
+              className="btn btn-primary"
               onClick={() => {
                 onUseTemplate({ html: active.html });
                 setApplied(true);
@@ -293,24 +294,24 @@ export default function TemplateLibrary({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Template Name</div>
+        <label className="block space-y-1.5">
+          <span className="block text-sm font-medium">Template Name</span>
           <input
             value={active.name}
             onChange={(e) => updateActive({ name: e.target.value })}
-            className="w-full rounded border border-gray-200 px-3 py-2 text-sm"
+            className="input w-full"
             placeholder="Enter a name"
           />
-        </div>
+        </label>
 
         {/* Upload HTML file */}
-        <div className="space-y-2" id="tutorial-upload-html">
+        <div className="space-y-1.5" id="tutorial-upload-html">
           <div className="text-sm font-medium">Upload HTML Template</div>
-          <label className="inline-flex items-center gap-2 px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50 cursor-pointer w-fit">
+          <label className="btn w-fit">
             <input
               type="file"
               accept=".html,.htm,.txt"
-              className="hidden"
+              className="sr-only"
               onChange={async (e) => {
                 const f = e.target.files?.[0];
                 if (!f) return;
@@ -318,6 +319,7 @@ export default function TemplateLibrary({
                 updateActive({ html: text });
               }}
             />
+            <Icon name="upload" />
             <span>Choose file…</span>
           </label>
         </div>
@@ -344,24 +346,26 @@ export default function TemplateLibrary({
             />
           ) : (
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <span className="opacity-60">Zoom</span>
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <span>Zoom</span>
                 <div className="inline-flex items-center gap-1">
                   <button
                     type="button"
+                    aria-label="Zoom out"
                     onClick={() => adjustRawZoom(-0.1, setRawZoom)}
-                    className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="btn btn-sm btn-icon"
                     disabled={rawZoom <= RAW_ZOOM_MIN}
                   >
                     -
                   </button>
-                  <span className="w-16 text-center">
+                  <span className="w-12 text-center tabular-nums">
                     {(rawZoom * 100).toFixed(0)}%
                   </span>
                   <button
                     type="button"
+                    aria-label="Zoom in"
                     onClick={() => adjustRawZoom(0.1, setRawZoom)}
-                    className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="btn btn-sm btn-icon"
                     disabled={rawZoom >= RAW_ZOOM_MAX}
                   >
                     +
@@ -369,7 +373,7 @@ export default function TemplateLibrary({
                   <button
                     type="button"
                     onClick={() => setRawZoom(1)}
-                    className="ml-1 px-2 py-0.5 rounded border border-slate-700 bg-slate-900 hover:bg-slate-800"
+                    className="btn btn-sm ml-1"
                     disabled={Math.abs(rawZoom - 1) < 0.05}
                   >
                     Reset
@@ -379,18 +383,19 @@ export default function TemplateLibrary({
               <div className="relative">
               <textarea
                 ref={rawTextareaRef}
+                aria-label="Email HTML source"
                 value={active.html}
                 onChange={(e) => updateActive({ html: e.target.value })}
                 onKeyDown={(e) => handleRawKeyDown(e, active.html, updateActive)}
                 rows={22}
                 spellCheck={false}
-                  className="w-full min-h-[26rem] rounded-lg border border-slate-800 bg-slate-950 text-slate-100 font-mono shadow-inner focus:outline-none focus:ring-2 focus:ring-[#049fd9] px-4 py-4"
+                  className="code-editor w-full min-h-[26rem] px-4 py-4"
                   style={{
                     fontSize: `${(rawZoom * BASE_RAW_FONT_SIZE).toFixed(2)}px`,
                     lineHeight: `${(rawZoom * BASE_RAW_LINE_HEIGHT).toFixed(2)}px`,
                   }}
               />
-              <div className="pointer-events-none absolute top-2 right-3 text-[11px] uppercase tracking-wide text-slate-500">
+              <div className="pointer-events-none absolute top-2 right-3 text-[11px] uppercase tracking-wide text-[#a99bcb]">
                 HTML
               </div>
               </div>

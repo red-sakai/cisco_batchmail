@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ParsedCsv, CsvMapping } from "./CsvUploader";
 import { deriveColumnHref, isLinkColumn } from "@/lib/links";
+import Icon from "./Icon";
 
 type Props = {
   csv: ParsedCsv | null;
@@ -40,7 +41,13 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
     return set;
   }, [csv]);
 
-  if (!csv) return <div className="text-sm opacity-80">No CSV loaded.</div>;
+  if (!csv) {
+    return (
+      <div className="card border-dashed p-6 text-center text-sm text-muted">
+        No recipients yet. Upload a CSV or add someone manually to review them here.
+      </div>
+    );
+  }
 
   const commitCell = (rowIndex: number, header: string, value: string) => {
     const updatedRows = [...csv.rows];
@@ -100,22 +107,22 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4 text-sm">
-        <div className="opacity-70">Rows: {csv.rowCount}</div>
+    <div className="card p-4 sm:p-5 space-y-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        <div className="font-medium tabular-nums">Rows: {csv.rowCount}</div>
         <label className="inline-flex items-center gap-2">
-          <span className="opacity-70">Search</span>
+          <span className="text-muted">Search</span>
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+            className="input"
             placeholder="Filter..."
           />
         </label>
         <label className="inline-flex items-center gap-2">
-          <span className="opacity-70">Show</span>
+          <span className="text-muted">Show</span>
           <select
-            className="rounded-md border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+            className="input"
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
           >
@@ -127,43 +134,43 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
         <button
           type="button"
           onClick={downloadCsv}
-          className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50"
+          className="btn sm:ml-auto"
         >
           Download CSV
         </button>
       </div>
 
       {showAddCol && (
-        <div className="flex items-center gap-3 text-sm">
+        <div className="notice flex flex-wrap items-center gap-3 !p-3 text-sm">
           <input
             value={newHeader}
             onChange={(e) => setNewHeader(e.target.value)}
             placeholder="New column name"
-            className="w-52 rounded-md border border-gray-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+            className="input w-52"
           />
           <button
             type="button"
             onClick={addColumn}
-            className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50"
+            className="btn"
           >
             Add
           </button>
         </div>
       )}
 
-      <div className="overflow-auto max-h-[60vh] border border-gray-200 rounded-md shadow-sm">
+      <div className="overflow-auto max-h-[60vh] border border-line rounded-lg">
         <table className="min-w-full text-sm">
-          <thead className="sticky top-0 bg-gray-100">
+          <thead className="sticky top-0 z-10 bg-surface-2">
             <tr>
               {csv.headers.map((h) => (
-                <th key={h} className="px-3 py-2 border border-gray-200 text-left font-semibold bg-gray-50 min-w-[140px]">
+                <th key={h} className="px-3 py-2 border border-line text-left font-semibold bg-surface-2 min-w-[140px]">
                   <div className="flex items-center justify-between gap-2">
                     <span className="flex items-center gap-1.5 min-w-0">
                       <span className="truncate" title={h}>{h}</span>
                       {linkColumns.has(h) && (
                         <span
                           title="Link column: values in this column are clickable links"
-                          className="inline-flex flex-none items-center gap-1 rounded border border-[#049fd9]/40 bg-[#ebf6fc] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#0071a4] dark:border-[#38bdf8]/40 dark:bg-[#10263f] dark:text-[#7dd3fc]"
+                          className="inline-flex flex-none items-center gap-1 rounded border border-accent-ink/40 bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-ink"
                         >
                           <svg
                             viewBox="0 0 24 24"
@@ -185,22 +192,23 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                     <button
                       type="button"
                       onClick={() => deleteColumn(h)}
-                      className="text-[11px] px-1 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-100"
+                      className="btn btn-sm btn-icon btn-danger"
                       aria-label={`Delete column ${h}`}
+                      title={`Delete column ${h}`}
                     >
-                      ✕
+                      <Icon name="x" />
                     </button>
                   </div>
                 </th>
               ))}
-              <th className="px-3 py-2 border border-gray-200 text-left font-semibold bg-gray-50">
+              <th className="px-3 py-2 border border-line text-left font-semibold bg-surface-2">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setShowAddCol((v) => !v)}
-                    className="text-[11px] px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-100"
+                    className="btn btn-sm"
                   >
-                    {showAddCol ? "Cancel" : "+ Column"}
+                    {showAddCol ? "Cancel" : <><Icon name="plus" className="h-3 w-3" />Column</>}
                   </button>
                   <button
                     type="button"
@@ -214,9 +222,10 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                       };
                       onChange?.(updated);
                     }}
-                    className="text-[11px] px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-100"
+                    className="btn btn-sm"
                   >
-                    + Row
+                    <Icon name="plus" className="h-3 w-3" />
+                    Row
                   </button>
                 </div>
               </th>
@@ -224,7 +233,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={i} className="odd:bg-white even:bg-gray-50 hover:bg-[#ebf6fc]/60 dark:bg-[#10263f]/60">
+              <tr key={i} className="odd:bg-surface even:bg-surface-2 hover:bg-accent-soft transition-colors">
                 {csv.headers.map((h) => {
                   const isEditing = editingCell && editingCell.row === i && editingCell.header === h;
                   const rawValue = String(row[h] ?? "");
@@ -235,7 +244,8 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                   return (
                     <td
                       key={h}
-                      className="px-3 py-1.5 border border-gray-200 align-top max-w-[40ch] truncate cursor-pointer"
+                      title="Double-click to edit"
+                      className="px-3 py-1.5 border border-line align-top max-w-[40ch] truncate cursor-pointer"
                       onDoubleClick={() => setEditingCell({ row: i, header: h })}
                     >
                       {isEditing ? (
@@ -250,14 +260,14 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                               setEditingCell(null);
                             }
                           }}
-                          className="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#049fd9]"
+                          className="input w-full !min-h-0 !py-1 text-xs"
                         />
                       ) : linkHref ? (
                         <a
                           href={linkHref}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="whitespace-pre-wrap break-words text-[13px] leading-snug text-[#0071a4] underline underline-offset-2 hover:text-[#049fd9] dark:text-[#7dd3fc] dark:hover:text-[#38bdf8]"
+                          className="whitespace-pre-wrap break-words text-[13px] leading-snug text-accent-ink underline hover:text-foreground"
                         >
                           {rawValue}
                         </a>
@@ -267,7 +277,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                     </td>
                   );
                 })}
-                <td className="px-3 py-1.5 border border-gray-200 align-top">
+                <td className="px-3 py-1.5 border border-line align-top">
                   <button
                     type="button"
                     onClick={() => {
@@ -284,7 +294,7 @@ export default function CsvTable({ csv, mapping, onMappingChange, onChange }: Pr
                       const updated: ParsedCsv = { ...csv, rows: updatedRows, rowCount: Math.max((csv.rowCount || 1) - 1, 0) };
                       onChange?.(updated);
                     }}
-                    className="text-[11px] px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-100"
+                    className="btn btn-sm btn-danger"
                   >
                     Delete
                   </button>

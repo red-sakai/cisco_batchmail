@@ -1,0 +1,1239 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-06T01:18:33.603Z",
+  "title": "Design System: BatchMail",
+  "extensions": {
+    "colorMeta": {
+      "sky": {
+        "role": "neutral",
+        "displayName": "Aubergine Sky",
+        "tonalRamp": [
+          "#130419",
+          "#33163c",
+          "#53345d",
+          "#755580",
+          "#9978a5",
+          "#bf9ccb",
+          "#e3bfef",
+          "#f6e9fb"
+        ]
+      },
+      "nebula-a": {
+        "role": "neutral",
+        "displayName": "Nebula A",
+        "tonalRamp": [
+          "#110027",
+          "#30035a",
+          "#531891",
+          "#7442b8",
+          "#9767e1",
+          "#b993fc",
+          "#d6c2ff",
+          "#f1ebff"
+        ]
+      },
+      "nebula-b": {
+        "role": "neutral",
+        "displayName": "Nebula B",
+        "tonalRamp": [
+          "#19001a",
+          "#3f0141",
+          "#6c0c6e",
+          "#923893",
+          "#b85db9",
+          "#e082e0",
+          "#feacfd",
+          "#fee5fd"
+        ]
+      },
+      "nebula-c": {
+        "role": "neutral",
+        "displayName": "Nebula C",
+        "tonalRamp": [
+          "#0e002c",
+          "#280362",
+          "#462493",
+          "#654bba",
+          "#8770e3",
+          "#aa9afe",
+          "#ccc6fe",
+          "#eeecff"
+        ]
+      },
+      "planet-rim": {
+        "role": "neutral",
+        "displayName": "Planet Rim",
+        "tonalRamp": [
+          "#100029",
+          "#2e005f",
+          "#4b2a84",
+          "#6c4eaa",
+          "#8e72d2",
+          "#b397fa",
+          "#d2c4fd",
+          "#efebff"
+        ]
+      },
+      "planet-body": {
+        "role": "neutral",
+        "displayName": "Planet Body",
+        "tonalRamp": [
+          "#0f002a",
+          "#2b0260",
+          "#4a2390",
+          "#6a49b7",
+          "#8c6ee0",
+          "#af97ff",
+          "#cfc5fe",
+          "#efecff"
+        ]
+      },
+      "planet-core": {
+        "role": "neutral",
+        "displayName": "Planet Core",
+        "tonalRamp": [
+          "#0f061b",
+          "#2b1a41",
+          "#4a3862",
+          "#6b5986",
+          "#8e7cab",
+          "#b3a0d2",
+          "#d6c3f6",
+          "#f1ebfd"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "#0e061e",
+          "#281a45",
+          "#463967",
+          "#675a8b",
+          "#8a7db0",
+          "#afa1d7",
+          "#d2c4fc",
+          "#f0ebff"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Surface 2",
+        "tonalRamp": [
+          "#0f0421",
+          "#2a164a",
+          "#48366d",
+          "#695791",
+          "#8c7ab7",
+          "#b09fde",
+          "#d3c3fd",
+          "#f0ebfe"
+        ]
+      },
+      "surface-3": {
+        "role": "neutral",
+        "displayName": "Surface 3",
+        "tonalRamp": [
+          "#0f0323",
+          "#2b134e",
+          "#493471",
+          "#6a5596",
+          "#8d78bc",
+          "#b29de4",
+          "#d3c3fe",
+          "#f0ebff"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Starwhite",
+        "tonalRamp": [
+          "#0c0a0f",
+          "#26222b",
+          "#44404a",
+          "#65616c",
+          "#88848f",
+          "#ada8b4",
+          "#d0cbd8",
+          "#efedf2"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Haze",
+        "tonalRamp": [
+          "#0d0817",
+          "#281e39",
+          "#463c5a",
+          "#675d7d",
+          "#8a80a1",
+          "#afa4c7",
+          "#d2c7eb",
+          "#f0ecf9"
+        ]
+      },
+      "subtle": {
+        "role": "neutral",
+        "displayName": "Far Haze",
+        "tonalRamp": [
+          "#0e071b",
+          "#281c3f",
+          "#473a61",
+          "#685b84",
+          "#8b7ea9",
+          "#afa2d0",
+          "#d2c5f4",
+          "#f0ecfc"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "#0f0225",
+          "#2b1052",
+          "#493275",
+          "#6a549a",
+          "#8d77c1",
+          "#b29ce8",
+          "#d3c3fe",
+          "#f0ebff"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Control Line",
+        "tonalRamp": [
+          "#100126",
+          "#2c0e54",
+          "#4a3178",
+          "#6a539d",
+          "#8d76c4",
+          "#b29beb",
+          "#d3c3ff",
+          "#f0ebfe"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Ultraviolet",
+        "tonalRamp": [
+          "#0d002c",
+          "#270066",
+          "#4704ab",
+          "#6631e2",
+          "#8466fe",
+          "#a79cfc",
+          "#cac6ff",
+          "#edecff"
+        ]
+      },
+      "accent-strong": {
+        "role": "primary",
+        "displayName": "Deep Ultraviolet",
+        "tonalRamp": [
+          "#0c002d",
+          "#250265",
+          "#440baa",
+          "#6334e1",
+          "#8168fd",
+          "#a49dfc",
+          "#c9c7fe",
+          "#edecff"
+        ]
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Lilac Ink",
+        "tonalRamp": [
+          "#0e0421",
+          "#29164b",
+          "#47366e",
+          "#685793",
+          "#8b7ab9",
+          "#b09fe0",
+          "#d2c3ff",
+          "#f0ebfe"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Violet Wash",
+        "tonalRamp": [
+          "#0f002a",
+          "#2a0a5b",
+          "#47307f",
+          "#6752a5",
+          "#8976cc",
+          "#ad9bf5",
+          "#cfc5fe",
+          "#eeecff"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Ultraviolet",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ]
+      },
+      "star": {
+        "role": "secondary",
+        "displayName": "Starlight Gold",
+        "tonalRamp": [
+          "#110a00",
+          "#302100",
+          "#553e02",
+          "#7e5d01",
+          "#a48030",
+          "#caa557",
+          "#eec87a",
+          "#faedd3"
+        ]
+      },
+      "on-star": {
+        "role": "secondary",
+        "displayName": "Star Ink",
+        "tonalRamp": [
+          "#120900",
+          "#312104",
+          "#513f23",
+          "#736043",
+          "#978365",
+          "#bca889",
+          "#e0caab",
+          "#f5ede2"
+        ]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Log Mint",
+        "tonalRamp": [
+          "#000f07",
+          "#012c1a",
+          "#064f33",
+          "#09764e",
+          "#339c6e",
+          "#5dc292",
+          "#82e6b4",
+          "#d7f8e5"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Caution Amber",
+        "tonalRamp": [
+          "#110a00",
+          "#2f2200",
+          "#543f03",
+          "#7d5e03",
+          "#a7800c",
+          "#d0a433",
+          "#f5c75c",
+          "#fdedcb"
+        ]
+      },
+      "warn-soft": {
+        "role": "tertiary",
+        "displayName": "Warn Soft",
+        "tonalRamp": [
+          "#110a01",
+          "#2e220a",
+          "#4d4028",
+          "#6f6148",
+          "#93846a",
+          "#b8a98e",
+          "#dbccb0",
+          "#f3eee4"
+        ]
+      },
+      "warn-line": {
+        "role": "tertiary",
+        "displayName": "Warn Line",
+        "tonalRamp": [
+          "#110a00",
+          "#302200",
+          "#553f01",
+          "#795f23",
+          "#9d8248",
+          "#c3a76c",
+          "#e7ca8e",
+          "#f7eed9"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Failure Rose",
+        "tonalRamp": [
+          "#1e0006",
+          "#490119",
+          "#791332",
+          "#a13b52",
+          "#c95f74",
+          "#f38498",
+          "#ffb8c2",
+          "#ffe8eb"
+        ]
+      },
+      "danger-soft": {
+        "role": "tertiary",
+        "displayName": "Danger Soft",
+        "tonalRamp": [
+          "#18030d",
+          "#3c1427",
+          "#5e3245",
+          "#825366",
+          "#a77589",
+          "#ce9aae",
+          "#f2bcd1",
+          "#fce8f0"
+        ]
+      },
+      "danger-line": {
+        "role": "tertiary",
+        "displayName": "Danger Line",
+        "tonalRamp": [
+          "#1d0009",
+          "#48001f",
+          "#70213d",
+          "#97445d",
+          "#be6780",
+          "#e68ba4",
+          "#feb7c9",
+          "#fee8ed"
+        ]
+      },
+      "shell": {
+        "role": "neutral",
+        "displayName": "Header Violet",
+        "tonalRamp": [
+          "#0e002b",
+          "#280561",
+          "#452e86",
+          "#6451ac",
+          "#8675d4",
+          "#aa9afc",
+          "#ccc6ff",
+          "#eeecff"
+        ]
+      },
+      "shell-line": {
+        "role": "neutral",
+        "displayName": "Shell Line",
+        "tonalRamp": [
+          "#0f002a",
+          "#2a0360",
+          "#48278e",
+          "#684cb5",
+          "#8a70dd",
+          "#ae98ff",
+          "#cec5fe",
+          "#eeecff"
+        ]
+      },
+      "on-shell": {
+        "role": "neutral",
+        "displayName": "On Shell",
+        "tonalRamp": [
+          "#0c0a10",
+          "#26222d",
+          "#44404d",
+          "#65616e",
+          "#888392",
+          "#ada8b7",
+          "#d0cbda",
+          "#efedf3"
+        ]
+      },
+      "on-shell-muted": {
+        "role": "neutral",
+        "displayName": "On Shell Muted",
+        "tonalRamp": [
+          "#0d071b",
+          "#281c3f",
+          "#463b61",
+          "#675b84",
+          "#8a7ea9",
+          "#afa3d0",
+          "#d2c6f4",
+          "#f0ecfc"
+        ]
+      },
+      "sky-light": {
+        "role": "neutral",
+        "displayName": "Lavender Sky",
+        "tonalRamp": [
+          "#0c0912",
+          "#262130",
+          "#443f4f",
+          "#656071",
+          "#888395",
+          "#ada7ba",
+          "#d0cade",
+          "#efedf4"
+        ]
+      },
+      "nebula-a-light": {
+        "role": "neutral",
+        "displayName": "Nebula A (light)",
+        "tonalRamp": [
+          "#0f051e",
+          "#2a1845",
+          "#493867",
+          "#6a598b",
+          "#8d7bb0",
+          "#b2a0d7",
+          "#d5c3fc",
+          "#f1ebff"
+        ]
+      },
+      "nebula-b-light": {
+        "role": "neutral",
+        "displayName": "Nebula B (light)",
+        "tonalRamp": [
+          "#140512",
+          "#341830",
+          "#553650",
+          "#785772",
+          "#9c7996",
+          "#c29ebb",
+          "#e6c0df",
+          "#f7eaf5"
+        ]
+      },
+      "nebula-c-light": {
+        "role": "neutral",
+        "displayName": "Nebula C (light)",
+        "tonalRamp": [
+          "#07091c",
+          "#1c2042",
+          "#393f64",
+          "#596087",
+          "#7c83ad",
+          "#a0a8d3",
+          "#c2cbf8",
+          "#eaeefe"
+        ]
+      },
+      "planet-rim-light": {
+        "role": "neutral",
+        "displayName": "Planet Rim (light)",
+        "tonalRamp": [
+          "#0d0913",
+          "#272032",
+          "#463e52",
+          "#675f74",
+          "#8a8298",
+          "#afa6be",
+          "#d2c9e1",
+          "#f0edf5"
+        ]
+      },
+      "planet-body-light": {
+        "role": "neutral",
+        "displayName": "Planet Body (light)",
+        "tonalRamp": [
+          "#100225",
+          "#2b1051",
+          "#493275",
+          "#6a549a",
+          "#8d77c1",
+          "#b29ce8",
+          "#d3c3fe",
+          "#f0ebff"
+        ]
+      },
+      "planet-core-light": {
+        "role": "neutral",
+        "displayName": "Planet Core (light)",
+        "tonalRamp": [
+          "#0f002a",
+          "#2c025f",
+          "#4a288a",
+          "#694cb0",
+          "#8c71d8",
+          "#b097fe",
+          "#d0c4fe",
+          "#efecff"
+        ]
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "Surface (light)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ]
+      },
+      "surface-2-light": {
+        "role": "neutral",
+        "displayName": "Surface 2 (light)",
+        "tonalRamp": [
+          "#0c0a0f",
+          "#25222b",
+          "#44404a",
+          "#65616b",
+          "#88848f",
+          "#aca9b4",
+          "#cfcbd7",
+          "#efeef2"
+        ]
+      },
+      "surface-3-light": {
+        "role": "neutral",
+        "displayName": "Surface 3 (light)",
+        "tonalRamp": [
+          "#0c0912",
+          "#262131",
+          "#453f50",
+          "#666072",
+          "#898296",
+          "#aea7bc",
+          "#d1cadf",
+          "#efedf5"
+        ]
+      },
+      "foreground-light": {
+        "role": "neutral",
+        "displayName": "Starwhite (light)",
+        "tonalRamp": [
+          "#0c071c",
+          "#261c43",
+          "#443b65",
+          "#655c88",
+          "#877ead",
+          "#aca3d4",
+          "#cfc6f9",
+          "#efecfe"
+        ]
+      },
+      "muted-light": {
+        "role": "neutral",
+        "displayName": "Haze (light)",
+        "tonalRamp": [
+          "#0e061d",
+          "#281a44",
+          "#463966",
+          "#675a89",
+          "#8a7daf",
+          "#afa1d5",
+          "#d2c4fa",
+          "#f0ebff"
+        ]
+      },
+      "subtle-light": {
+        "role": "neutral",
+        "displayName": "Far Haze (light)",
+        "tonalRamp": [
+          "#0e061c",
+          "#281b42",
+          "#473a63",
+          "#675b87",
+          "#8a7dac",
+          "#afa2d3",
+          "#d2c5f7",
+          "#f0ebfe"
+        ]
+      },
+      "line-light": {
+        "role": "neutral",
+        "displayName": "Hairline (light)",
+        "tonalRamp": [
+          "#0d0915",
+          "#271f35",
+          "#453e55",
+          "#665e77",
+          "#89819c",
+          "#aea6c1",
+          "#d1c8e5",
+          "#f0edf7"
+        ]
+      },
+      "line-strong-light": {
+        "role": "neutral",
+        "displayName": "Control Line (light)",
+        "tonalRamp": [
+          "#0e051f",
+          "#291847",
+          "#47376a",
+          "#68588e",
+          "#8b7bb3",
+          "#b0a0da",
+          "#d3c3fd",
+          "#f0ebfe"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "Ultraviolet (light)",
+        "tonalRamp": [
+          "#0c002d",
+          "#260364",
+          "#4601ad",
+          "#652fe4",
+          "#8368fb",
+          "#a59cfe",
+          "#cac7fe",
+          "#edecff"
+        ]
+      },
+      "accent-strong-light": {
+        "role": "primary",
+        "displayName": "Deep Ultraviolet (light)",
+        "tonalRamp": [
+          "#0b002d",
+          "#250167",
+          "#4307ad",
+          "#6038df",
+          "#7f6afb",
+          "#a39dfe",
+          "#c8c7fd",
+          "#ecedff"
+        ]
+      },
+      "accent-ink-light": {
+        "role": "primary",
+        "displayName": "Lilac Ink (light)",
+        "tonalRamp": [
+          "#0b002d",
+          "#250167",
+          "#4307ad",
+          "#6038df",
+          "#7f6afb",
+          "#a39dfe",
+          "#c8c7fd",
+          "#ecedff"
+        ]
+      },
+      "accent-soft-light": {
+        "role": "primary",
+        "displayName": "Violet Wash (light)",
+        "tonalRamp": [
+          "#0c0913",
+          "#262131",
+          "#443f51",
+          "#656073",
+          "#888297",
+          "#ada7bd",
+          "#d0cae0",
+          "#efedf5"
+        ]
+      },
+      "star-light": {
+        "role": "secondary",
+        "displayName": "Starlight Gold (light)",
+        "tonalRamp": [
+          "#120a00",
+          "#312100",
+          "#563e03",
+          "#805c03",
+          "#ab7d0c",
+          "#d8a01a",
+          "#fdc34c",
+          "#ffeccb"
+        ]
+      },
+      "success-light": {
+        "role": "tertiary",
+        "displayName": "Log Mint (light)",
+        "tonalRamp": [
+          "#000f06",
+          "#012c19",
+          "#045032",
+          "#05764b",
+          "#3d9b6d",
+          "#65c191",
+          "#89e5b3",
+          "#d9f7e5"
+        ]
+      },
+      "warn-light": {
+        "role": "tertiary",
+        "displayName": "Caution Amber (light)",
+        "tonalRamp": [
+          "#130900",
+          "#331f01",
+          "#5b3b05",
+          "#865807",
+          "#ad7b32",
+          "#d4a059",
+          "#f9c37c",
+          "#feebd3"
+        ]
+      },
+      "warn-soft-light": {
+        "role": "tertiary",
+        "displayName": "Warn Soft (light)",
+        "tonalRamp": [
+          "#0f0b01",
+          "#2c230a",
+          "#4b4229",
+          "#6c6348",
+          "#90866a",
+          "#b5aa8e",
+          "#d8cdb0",
+          "#f2eee4"
+        ]
+      },
+      "warn-line-light": {
+        "role": "tertiary",
+        "displayName": "Warn Line (light)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2200",
+          "#533f02",
+          "#796015",
+          "#9d833e",
+          "#c3a863",
+          "#e7cb85",
+          "#f7eed6"
+        ]
+      },
+      "danger-light": {
+        "role": "tertiary",
+        "displayName": "Failure Rose (light)",
+        "tonalRamp": [
+          "#1e0005",
+          "#490217",
+          "#7d072d",
+          "#b12048",
+          "#dc4c6a",
+          "#fe7c91",
+          "#ffb8c0",
+          "#ffe8ea"
+        ]
+      },
+      "danger-soft-light": {
+        "role": "tertiary",
+        "displayName": "Danger Soft (light)",
+        "tonalRamp": [
+          "#11080b",
+          "#2e1f23",
+          "#4e3d41",
+          "#705e62",
+          "#948085",
+          "#b9a5a9",
+          "#ddc7cc",
+          "#f4ecee"
+        ]
+      },
+      "danger-line-light": {
+        "role": "tertiary",
+        "displayName": "Danger Line (light)",
+        "tonalRamp": [
+          "#1a030a",
+          "#3e1221",
+          "#61313f",
+          "#855260",
+          "#ab7483",
+          "#d298a7",
+          "#f7bbca",
+          "#fee8ed"
+        ]
+      },
+      "shell-light": {
+        "role": "neutral",
+        "displayName": "Header Violet (light)",
+        "tonalRamp": [
+          "#0c002c",
+          "#250c5e",
+          "#403283",
+          "#6054a9",
+          "#8278d0",
+          "#a59df9",
+          "#c9c7fe",
+          "#edecff"
+        ]
+      },
+      "shell-line-light": {
+        "role": "neutral",
+        "displayName": "Shell Line (light)",
+        "tonalRamp": [
+          "#0d002c",
+          "#280065",
+          "#442a8d",
+          "#634fb4",
+          "#8473dc",
+          "#a89bff",
+          "#cbc6fe",
+          "#edecff"
+        ]
+      },
+      "on-shell-muted-light": {
+        "role": "neutral",
+        "displayName": "On Shell Muted (light)",
+        "tonalRamp": [
+          "#0e071a",
+          "#281c3f",
+          "#473a61",
+          "#685b84",
+          "#8b7ea9",
+          "#afa2cf",
+          "#d2c5f4",
+          "#f0ecfc"
+        ]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night",
+        "tonalRamp": [
+          "#0e061c",
+          "#291a42",
+          "#483963",
+          "#695a87",
+          "#8c7dac",
+          "#b1a1d3",
+          "#d4c4f7",
+          "#f0ebfe"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "tonalRamp": [
+          "#0c0a11",
+          "#26212e",
+          "#443f4e",
+          "#656070",
+          "#888393",
+          "#ada7b8",
+          "#d0cadc",
+          "#efedf3"
+        ]
+      },
+      "star-pending": {
+        "role": "neutral",
+        "displayName": "Unlit Star",
+        "tonalRamp": [
+          "#0e051f",
+          "#281947",
+          "#463869",
+          "#67598d",
+          "#8a7cb3",
+          "#afa1da",
+          "#d2c3ff",
+          "#efebff"
+        ]
+      },
+      "star-failed": {
+        "role": "tertiary",
+        "displayName": "Failed Star",
+        "tonalRamp": [
+          "#1e0006",
+          "#490017",
+          "#7e042e",
+          "#b80447",
+          "#e34168",
+          "#ff7a91",
+          "#feb8c1",
+          "#ffe8ea"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ]
+      },
+      "paper-ink": {
+        "role": "neutral",
+        "displayName": "Paper Ink",
+        "tonalRamp": [
+          "#070b14",
+          "#1c2434",
+          "#3a4254",
+          "#5a6376",
+          "#7d869a",
+          "#a1abc0",
+          "#c4cee3",
+          "#ebeff6"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The page title on open sky."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Card and section titles."
+      },
+      "stat": {
+        "displayName": "Stat",
+        "purpose": "Review figures, in tabular numerals."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "The working size for controls, tables, and guidance."
+      },
+      "prose": {
+        "displayName": "Prose",
+        "purpose": "The Help tab only, at 72ch maximum."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, chips, and notices, in sentence case."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Step rail subtext and the sign-in footnote."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "The send log, variable chips, and raw HTML: literal data and code only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 8px 24px -14px rgb(var(--shadow-color) / 0.55)",
+        "purpose": "Every card, including menus and the sticky action bar."
+      },
+      {
+        "name": "tour-popover",
+        "value": "0 16px 40px -16px rgb(var(--shadow-color) / 0.8)",
+        "purpose": "Guided tour steps."
+      },
+      {
+        "name": "modal",
+        "value": "0 24px 60px -20px rgb(var(--shadow-color) / 0.8)",
+        "purpose": "Dialogs, the top of the stack."
+      },
+      {
+        "name": "shadow-color",
+        "value": "dark 4 0 16; light 88 60 170",
+        "purpose": "The per-mode shadow tint, as RGB channels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default easing for movement, entrances, and ignite."
+      },
+      {
+        "name": "interface-state",
+        "value": "150ms-200ms ease-out",
+        "purpose": "Background, border, and color state changes."
+      },
+      {
+        "name": "interface-entrance",
+        "value": "160ms-280ms ease-out-expo",
+        "purpose": "Popovers 160ms, notices 220ms, panels and dialogs 240ms, the rail indicator 280ms."
+      },
+      {
+        "name": "completion-fill",
+        "value": "420ms ease-out-expo",
+        "purpose": "Step connector and progress bar fill."
+      },
+      {
+        "name": "ignite",
+        "value": "520ms-700ms ease-out-expo",
+        "purpose": "Done step node 520ms, send star 560ms, clean-run answer 700ms with an 18ms stagger capped at 900ms."
+      },
+      {
+        "name": "sky-drift",
+        "value": "420s and 720s linear infinite",
+        "purpose": "Star layers, transform only."
+      },
+      {
+        "name": "nebula-drift",
+        "value": "70s ease-in-out infinite alternate",
+        "purpose": "Nebula gradients, transform only."
+      },
+      {
+        "name": "twinkle",
+        "value": "7s and 9s ease-in-out infinite alternate",
+        "purpose": "Bright star layers, opacity only."
+      },
+      {
+        "name": "signin-entrance",
+        "value": "520ms card, 1100ms planet, 80s orbit",
+        "purpose": "Sign-in only."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Sky and orbit animation removed, and other CSS animation and transition durations cut to 0.01ms."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "container",
+        "value": "72rem"
+      },
+      {
+        "name": "coarse-pointer",
+        "value": "pointer: coarse (44px buttons, 36px small buttons)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The action that moves a step forward, including Send.",
+      "html": "<button class=\"ds-btn-primary\">Send 14 emails <svg class=\"ds-ico\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;min-height:2.25rem;padding:.375rem .75rem;border-radius:.5rem;font-size:.875rem;line-height:1.25rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease-out,transform 150ms cubic-bezier(.16,1,.3,1);border:1px solid transparent;background:var(--accent);color:#fff;font-weight:600}.ds-btn-primary:hover{background:var(--accent-strong)}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px;}.ds-ico{width:.875rem;height:.875rem;flex:none;transition:transform 200ms cubic-bezier(.16,1,.3,1)}.ds-btn-primary:hover .ds-ico{transform:translate(2px,-2px)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Every non-primary action on a surface.",
+      "html": "<button class=\"ds-btn\">Export JSON</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;min-height:2.25rem;padding:.375rem .75rem;border-radius:.5rem;font-size:.875rem;line-height:1.25rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease-out,transform 150ms cubic-bezier(.16,1,.3,1);border:1px solid var(--line-strong);background:var(--surface);color:var(--foreground)}.ds-btn:hover{background:var(--surface-3)}.ds-btn:active{transform:scale(.97)}.ds-btn:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px;}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-emphasis actions, in violet text.",
+      "html": "<button class=\"ds-btn-ghost\">Preview Tutorial</button>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;min-height:2.25rem;padding:.375rem .75rem;border-radius:.5rem;font-size:.875rem;line-height:1.25rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color 150ms ease-out,transform 150ms cubic-bezier(.16,1,.3,1);border:1px solid transparent;background:transparent;color:var(--accent-ink)}.ds-btn-ghost:hover{background:var(--accent-soft)}.ds-btn-ghost:active{transform:scale(.97)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px;}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Single-line field with a control-weight border.",
+      "html": "<input class=\"ds-input\" placeholder=\"you@cncp.org\" aria-label=\"Email\">",
+      "css": ".ds-input{min-height:2.25rem;padding:.375rem .75rem;border:1px solid var(--line-strong);border-radius:.5rem;background:var(--surface);color:var(--foreground);font-size:.875rem;line-height:1.25rem;transition:border-color 150ms ease-out}.ds-input::placeholder{color:var(--subtle)}.ds-input:hover{border-color:var(--accent-ink)}.ds-input:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px;}"
+    },
+    {
+      "name": "Step Rail",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "The three locked steps, with done steps in gold and the current step on Ultraviolet.",
+      "html": "<div class=\"ds-rail\"><span class=\"ds-tab\"><span class=\"ds-node ds-node-done\"><svg class=\"ds-check\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z\"/></svg></span><span class=\"ds-name\">Recipients<small>Done</small></span></span><span class=\"ds-link\"></span><span class=\"ds-tab ds-tab-on\"><span class=\"ds-node ds-node-on\">2</span><span class=\"ds-name\">Message<small>Write your email</small></span></span></div>",
+      "css": ".ds-rail{display:inline-flex;align-items:center;gap:.25rem;padding:.375rem;border:1px solid var(--line);border-radius:.875rem;background:var(--surface)}.ds-tab{display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border-radius:.5625rem;color:var(--foreground);cursor:pointer;transition:background-color 150ms ease-out}.ds-tab:not(.ds-tab-on):hover{background:var(--surface-2)}.ds-tab-on{background:var(--accent);color:#fff}.ds-name{font-size:.875rem;font-weight:600;line-height:1.25}.ds-name small{display:block;font-size:11px;font-weight:400;opacity:.85}.ds-node{display:flex;align-items:center;justify-content:center;width:1.75rem;height:1.75rem;border:1px solid var(--line-strong);border-radius:50%;font-size:.75rem;font-weight:600}.ds-node-on{border-color:rgb(255 255 255 / .55);background:rgb(255 255 255 / .18);color:#fff}.ds-node-done{border-color:var(--star);background:var(--star);color:var(--on-star)}.ds-check{width:.875rem;height:.875rem}.ds-link{width:1.5rem;height:2px;border-radius:2px;background:var(--star)}"
+    },
+    {
+      "name": "Status Chips",
+      "kind": "chip",
+      "refersTo": "chip-accent",
+      "description": "Readiness checks: accent when confirmed, rose on error.",
+      "html": "<span class=\"ds-chips\"><span class=\"ds-chip ds-chip-accent\"><svg class=\"ds-chip-ico\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z\"/></svg>Recipient list ready</span><span class=\"ds-chip ds-chip-danger\"><svg class=\"ds-chip-ico\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z\"/></svg>5 unknown variables</span></span>",
+      "css": ".ds-chips{display:inline-flex;flex-wrap:wrap;gap:.5rem}.ds-chip{display:inline-flex;align-items:center;gap:.375rem;padding:.25rem .625rem;border:1px solid var(--line);border-radius:999px;font-size:.75rem;line-height:1rem;font-weight:500}.ds-chip-accent{border-color:color-mix(in srgb,var(--accent-ink) 35%,transparent);background:var(--accent-soft);color:var(--accent-ink)}.ds-chip-danger{border-color:var(--danger-line);background:var(--danger-soft);color:var(--danger)}.ds-chip-ico{width:.875rem;height:.875rem;flex:none}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The opaque surface that holds all work above the sky.",
+      "html": "<section class=\"ds-card\"><h3>Subject line</h3><p>One last look before your emails go out.</p></section>",
+      "css": ".ds-card{max-width:24rem;padding:1.25rem;border:1px solid var(--line);border-radius:.875rem;background:var(--surface);color:var(--foreground);box-shadow:0 8px 24px -14px rgb(var(--shadow-color) / .55)}.ds-card h3{margin:0;font-size:1.125rem;font-weight:600}.ds-card p{margin:.25rem 0 0;font-size:.875rem;color:var(--muted)}"
+    },
+    {
+      "name": "Danger Notice",
+      "kind": "custom",
+      "refersTo": "notice-danger",
+      "description": "A failure stated in place, in rose.",
+      "html": "<div class=\"ds-notice\" role=\"alert\">Unknown variables will send blank: subject, position.</div>",
+      "css": ".ds-notice{padding:.5rem .75rem;border:1px solid var(--danger-line);border-radius:.5rem;background:var(--danger-soft);color:var(--danger);font-size:.75rem;line-height:1.125rem}"
+    },
+    {
+      "name": "Send Constellation",
+      "kind": "custom",
+      "refersTo": "send-sky",
+      "description": "The signature: one star per recipient, grouped by batch, igniting gold or rose from the live send log. Stays Night in both modes.",
+      "html": "<div class=\"ds-sky\" aria-hidden=\"true\"><span class=\"ds-batch\"><svg class=\"ds-line\"><polyline points=\"10,24 40,40 70,14 100,34\" fill=\"none\" stroke=\"rgb(255 255 255 / .22)\"/></svg><i class=\"ds-star ds-sent\" style=\"left:0;top:14px\"></i><i class=\"ds-star ds-sent\" style=\"left:30px;top:30px\"></i><i class=\"ds-star ds-failed\" style=\"left:60px;top:4px\"></i><i class=\"ds-star ds-sent\" style=\"left:90px;top:24px\"></i></span><span class=\"ds-batch ds-batch-2\"><svg class=\"ds-line\"><polyline points=\"10,40 40,14 70,34\" fill=\"none\" stroke=\"rgb(255 255 255 / .22)\"/></svg><i class=\"ds-star ds-now\" style=\"left:0;top:30px\"></i><i class=\"ds-star ds-now\" style=\"left:30px;top:4px\"></i><i class=\"ds-star\" style=\"left:60px;top:24px\"></i></span></div>",
+      "css": ".ds-sky{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem 1.75rem;padding:1rem;border-radius:.75rem;background:#1a0a30}.ds-batch{position:relative;width:110px;height:3.125rem}.ds-batch-2{width:80px}.ds-line{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.ds-star{position:absolute;width:1.25rem;height:1.25rem;border-radius:50%;background:radial-gradient(circle,#9d8fc7 0 16%,#1a0a30 30%)}.ds-now{background:radial-gradient(circle,#fff 0 18%,#1a0a30 36%);animation:ds-pulse 1.1s ease-in-out infinite alternate}.ds-sent{background:radial-gradient(circle,#fff 0 16%,#ffd98a 28%,#ffd98a00 68%),#1a0a30;animation:ds-ignite 560ms cubic-bezier(.16,1,.3,1) both}.ds-failed{background:radial-gradient(circle,#ffd5de 0 14%,#ff5c7f 28%,#ff5c7f00 68%),#1a0a30;animation:ds-ignite 560ms cubic-bezier(.16,1,.3,1) both}@keyframes ds-pulse{from{opacity:.45}}@keyframes ds-ignite{0%{opacity:.35;transform:scale(.5)}55%{opacity:1;transform:scale(1.35)}100%{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){.ds-star{animation:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Every Recipient Is a Star",
+    "overview": "BatchMail is a working tool under a night sky. A deep aubergine sky drifts behind solid violet-tinted cards, and the sky stays behind the task until a batch goes out. Then the one signature moment arrives: each recipient is a star, grouped into small constellations by batch, and each star lights as its email leaves. Gold means it went out. Rose means it did not.\n\nThe theme lives in the world, not on the controls. Buttons, inputs, tabs, and tables stay standard and legible, set in Geist, on opaque surfaces at a compact working density. The system refuses a glassy dark dashboard with neon edges, and it refuses space costume on the controls.\n\nDark is the default. The server renders the dark class on the root element, a script that runs before paint removes it when `batchmail_dark` is saved as `0` in localStorage, and the header toggle writes that key. Light mode is the same world at dawn: a lavender sky, white cards, the same deep violet header. Motion has three speeds. The sky moves on transform and opacity alone, over 70 to 720 seconds, with a 7 to 9 second twinkle. Interface transitions run 150 to 280ms. Completion runs longer: the rail connector and the progress bar fill over 420ms, and ignite takes 520 to 700ms. All of this CSS motion stops under prefers-reduced-motion, where the sky holds still and the interface changes state without travel.",
+    "keyCharacteristics": [
+      "Dark by default, with a lavender light mode behind one toggle.",
+      "A living sky behind opaque working surfaces.",
+      "One saturated ultraviolet for action, one gold for done, one rose for failure.",
+      "Geist throughout, Geist Mono for code, variables, and logs.",
+      "Email surfaces stay as recipients will see them, outside the theme."
+    ],
+    "rules": [
+      {
+        "name": "The Starlight Rule",
+        "body": "Gold means done or delivered. Primary actions, hover states, highlights, and warnings never use it, so a gold mark always means work is finished.",
+        "section": "colors"
+      },
+      {
+        "name": "The Equal Failure Rule",
+        "body": "A failed recipient gets the same star size, the same ignite, and a place in the same bar as a delivered one, in rose. Failures are never quieter than successes.",
+        "section": "colors"
+      },
+      {
+        "name": "The Recipient's View Rule",
+        "body": "The email editor and preview show the message as recipients will see it, so they stay light in dark mode and take no theme color. Outgoing templates are not part of this design system.",
+        "section": "colors"
+      },
+      {
+        "name": "The Literal Mono Rule",
+        "body": "Mono appears only on text that is literally data or code. It is never decoration.",
+        "section": "typography"
+      },
+      {
+        "name": "The Clear Title Rule",
+        "body": "The star layers are masked out of the top 10.5rem of the content column, so no star reads as punctuation beside the title.",
+        "section": "layout"
+      },
+      {
+        "name": "The Solid Surface Rule",
+        "body": "Working surfaces are opaque, so text contrast never depends on where a star happens to drift. No backdrop blur and no glass.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do reserve Starlight Gold for finished steps and delivered email, with Star Ink on any gold fill.",
+      "Do show every failure in Failure Rose beside a count or message that stays findable after the run.",
+      "Do keep working surfaces opaque, with the sky visible only in the gaps between them.",
+      "Do animate the sky with transform and opacity only, and keep interface transitions within 150 to 280ms.",
+      "Do gate every new animation, including scripted scrolling, so it stops under prefers-reduced-motion.",
+      "Do define new colors as a dark and light pair in both theme blocks.",
+      "Do keep the CNCP logo on a Header Violet chip in light mode, because it is white with a cyan glow and washes out on light grounds, and keep the name \"Cisco NetConnect PUP · Manila\" in the header."
+    ],
+    "donts": [
+      "Don't use glass, backdrop blur, or glowing borders on the interface. The only glow in the system belongs to send stars.",
+      "Don't dress controls as space objects. Buttons, inputs, tabs, and tables stay standard, and the theme stays in the sky and the constellation.",
+      "Don't use gold for primary actions, hover states, or warnings.",
+      "Don't theme the email editor or preview, or apply these tokens to outgoing templates.",
+      "Don't let stars drift behind the page title block.",
+      "Don't add planets or orbits to the working app. They belong to sign-in."
+    ]
+  }
+}

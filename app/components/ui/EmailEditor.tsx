@@ -277,7 +277,7 @@ function EmailEditorInner(
         <div className="inline-flex items-center gap-1 shrink-0">
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs disabled:opacity-50"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={undo}
             disabled={!historyState.canUndo}
@@ -287,7 +287,7 @@ function EmailEditorInner(
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs disabled:opacity-50"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={redo}
             disabled={!historyState.canRedo}
@@ -299,7 +299,7 @@ function EmailEditorInner(
         <div className="inline-flex items-center gap-1 shrink-0">
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={() => exec("bold")}
           >
@@ -307,7 +307,7 @@ function EmailEditorInner(
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={() => exec("italic")}
           >
@@ -315,7 +315,7 @@ function EmailEditorInner(
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={() => exec("underline")}
           >
@@ -323,27 +323,27 @@ function EmailEditorInner(
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={() => exec("insertUnorderedList")}
             title="Bulleted list"
           >
-            • List
+            Bullets
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={() => exec("insertOrderedList")}
             title="Numbered list"
           >
-            1. List
+            Numbers
           </button>
         </div>
         <div className="inline-flex items-center gap-1 shrink-0">
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={applyLink}
             title="Turn the selected text into a link"
@@ -352,7 +352,7 @@ function EmailEditorInner(
           </button>
           <button
             type="button"
-            className="px-2 py-1 border rounded text-xs"
+            className="btn btn-sm"
             onMouseDown={keepSelection}
             onClick={removeLink}
             title="Remove the link from the selected text"
@@ -364,7 +364,7 @@ function EmailEditorInner(
 
       <div
         ref={ref}
-        className="email-editor-surface min-h-40 w-full border rounded p-3 bg-white text-sm"
+        className="email-editor-surface min-h-40 w-full rounded-lg border border-line-strong p-3 text-sm"
         contentEditable
         suppressContentEditableWarning
         onInput={() => notify()}

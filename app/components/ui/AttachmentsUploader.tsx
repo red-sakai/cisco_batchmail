@@ -3,6 +3,7 @@
 import { normalizeNameKey } from "@/lib/normalizeName";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { ParsedCsv, CsvMapping } from "./CsvUploader";
+import Icon from "./Icon";
 
 export type AttachmentEntry = {
   filename: string;
@@ -124,65 +125,61 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4 space-y-3">
-      <div className="flex items-center justify-between gap-3">
+    <div className="card p-4 sm:p-5 space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-medium">2) Upload Attachments (optional)</h2>
-          <p className="text-xs opacity-80">File base name must match the CSV <strong>Name</strong> column (case-insensitive). Multiple files per name are allowed.</p>
+          <h2 className="text-lg font-semibold">Attachments (optional)</h2>
+          <p className="text-sm text-muted">File base name must match the CSV <strong className="font-semibold text-foreground">Name</strong> column (case-insensitive). Multiple files per name are allowed.</p>
         </div>
         <div className="flex items-center gap-2">
-          <label className="px-3 py-1 rounded border border-gray-200 text-sm bg-white text-gray-900 hover:bg-gray-50 cursor-pointer">
+          <label className="btn">
             <input
               ref={inputRef}
               type="file"
               multiple
               accept="*/*"
-              className="hidden"
+              className="sr-only"
               onChange={(e) => onUpload(e.target.files, e.target)}
             />
+            <Icon name="paperclip" />
             {isUploading ? "Uploading…" : "Choose files…"}
           </label>
-          <button type="button" onClick={clearAll} disabled={computed.files === 0} className="px-3 py-1 rounded border border-gray-200 text-sm bg-white hover:bg-gray-50 disabled:opacity-50">Clear</button>
+          <button type="button" onClick={clearAll} disabled={computed.files === 0} className="btn">Clear</button>
         </div>
       </div>
 
-      <div className="text-xs flex flex-wrap gap-3">
-        <span className="opacity-70">Summary:</span>
-  <span><strong>Total:</strong> {computed.files}</span>
-  <span className="text-[#0071a4] dark:text-[#7dd3fc]"><strong>Matched:</strong> {computed.matched}</span>
-  <span className="text-red-700"><strong>Unmatched:</strong> {computed.unmatched}</span>
+      <div className="flex flex-wrap gap-2 tabular-nums">
+        <span className="chip">Total {computed.files}</span>
+        <span className="chip chip-accent">Matched {computed.matched}</span>
+        <span className={`chip ${computed.unmatched > 0 ? "chip-danger" : ""}`}>Unmatched {computed.unmatched}</span>
       </div>
 
       {/* Matched pairs table */}
       {computed.matchedPairs.length > 0 && (
         <details className="text-xs" open>
-          <summary className="cursor-pointer font-medium text-[#0071a4] dark:text-[#7dd3fc]">View matched attachments ({computed.matched} files)</summary>
-          <div className="mt-2 overflow-x-auto border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+          <summary className="font-medium text-accent-ink">View matched attachments ({computed.matched} files)</summary>
+          <div className="mt-2 overflow-x-auto border border-line rounded-lg max-h-48 overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 sticky top-0">
+              <thead className="bg-surface-2 sticky top-0">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700 border-b border-gray-200">Name</th>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700 border-b border-gray-200">Attachments</th>
+                  <th className="px-3 py-2 text-left font-medium text-muted border-b border-line">Name</th>
+                  <th className="px-3 py-2 text-left font-medium text-muted border-b border-line">Attachments</th>
                 </tr>
               </thead>
               <tbody>
                 {computed.matchedPairs.map((pair, i) => (
-                  <tr key={i} className="border-b border-gray-200 last:border-b-0">
-                    <td className="px-3 py-2 text-gray-900 align-top whitespace-nowrap">
+                  <tr key={i} className="border-b border-line last:border-b-0">
+                    <td className="px-3 py-2 align-top whitespace-nowrap">
                       <span className="inline-flex items-center gap-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-[#049fd9] dark:text-[#38bdf8] flex-shrink-0">
-                          <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                        </svg>
+                        <Icon name="check" className="w-3.5 h-3.5 text-accent-ink" />
                         {pair.name}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-gray-700">
+                    <td className="px-3 py-2 text-muted">
                       <div className="flex flex-wrap gap-1">
                         {pair.files.map((file, j) => (
-                          <span key={j} className="inline-flex items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-400">
-                              <path d="M3 3.5A1.5 1.5 0 014.5 2h6.879a1.5 1.5 0 011.06.44l4.122 4.12A1.5 1.5 0 0117 7.622V16.5a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 013 16.5v-13z" />
-                            </svg>
+                          <span key={j} className="inline-flex items-center gap-1 rounded bg-surface-3 px-1.5 py-0.5 text-xs">
+                            <Icon name="file" className="w-3 h-3 text-subtle" />
                             {file}
                           </span>
                         ))}
@@ -198,32 +195,30 @@ export default function AttachmentsUploader({ csv, mapping, value, onChange }: P
 
       {computed.unmatchedFiles.length > 0 && (
         <details className="text-xs">
-          <summary className="cursor-pointer font-medium text-red-700">View unmatched files ({computed.unmatched} files)</summary>
+          <summary className="font-medium text-danger">View unmatched files ({computed.unmatched} files)</summary>
           <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
             {computed.unmatchedFiles.slice(0, 30).map((f, i) => (
-              <div key={i} className="flex items-center gap-2 rounded border border-red-200 bg-red-50 px-2 py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-red-400 flex-shrink-0">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                </svg>
-                <span className="text-red-700 truncate">{f}</span>
-                <span className="text-red-500 text-[10px] ml-auto flex-shrink-0">No matching name in CSV</span>
+              <div key={i} className="notice notice-danger flex items-center gap-2 !py-1">
+                <Icon name="alert" className="w-3 h-3" />
+                <span className="truncate">{f}</span>
+                <span className="text-[10px] ml-auto flex-shrink-0">No matching name in CSV</span>
               </div>
             ))}
             {computed.unmatchedFiles.length > 30 && (
-              <p className="text-red-600 pl-5">…and {computed.unmatchedFiles.length - 30} more</p>
+              <p className="text-danger pl-5">…and {computed.unmatchedFiles.length - 30} more</p>
             )}
           </div>
         </details>
       )}
 
       {uploadError && (
-        <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+        <div role="alert" className="notice notice-danger">
           {uploadError}
         </div>
       )}
 
       {largePdfDetected && (
-        <div className="text-xs text-yellow-800 bg-yellow-50 border border-yellow-200 rounded px-3 py-2">
+        <div className="notice notice-warn">
           Large 1-2 MB PDF attachments detected. Batch sending will be limited to 1 email per send to stay under attachment limits.
         </div>
       )}

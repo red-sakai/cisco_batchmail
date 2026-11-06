@@ -4,63 +4,1064 @@
    matching the in-app toggle (not the OS prefers-color-scheme). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Driver.js styles */
+/* ===== Galaxy design tokens ===== */
+:root {
+  color-scheme: light;
+  --sky: #ece6fa;
+  --nebula-a: #d8c6ff;
+  --nebula-b: #f5cfee;
+  --nebula-c: #c9d2ff;
+  --stars-opacity: 0.75;
+  --planet-rim: #efe6ff;
+  --planet-body: #b9a3f0;
+  --planet-core: #8f74dc;
+
+  --surface: #ffffff;
+  --surface-2: #f5f1fd;
+  --surface-3: #e9e2f8;
+  --foreground: #1d1238;
+  --muted: #574a78;
+  --subtle: #6f628f;
+  --line: #dcd3f0;
+  --line-strong: #8d7db5;
+
+  --accent: #6d3df0;
+  --accent-strong: #5a2dd6;
+  --accent-ink: #5a2dd6;
+  --accent-soft: #eee8ff;
+  --star: #c08400;
+  --on-star: #2a1a00;
+
+  --success: #0f7a4f;
+  --success-soft: #e3f6ed;
+  --warn: #8a5a00;
+  --warn-soft: #fff4d6;
+  --warn-line: #ecd08a;
+  --danger: #b4234a;
+  --danger-soft: #ffe9ee;
+  --danger-line: #f5b9c8;
+
+  --shell: #2c1868;
+  --shell-line: #452c8f;
+  --on-shell: #f4efff;
+  --on-shell-muted: #cabdeb;
+  --shadow-color: 88 60 170;
+}
+
+.dark {
+  color-scheme: dark;
+  --sky: #270a30;
+  --nebula-a: #5a2299;
+  --nebula-b: #7a1f7c;
+  --nebula-c: #43208f;
+  --stars-opacity: 1;
+  --planet-rim: #b79bff;
+  --planet-body: #4a2390;
+  --planet-core: #1c0a30;
+
+  --surface: #241540;
+  --surface-2: #2e1b4f;
+  --surface-3: #3a2460;
+  --foreground: #f4effc;
+  --muted: #c4b9dd;
+  --subtle: #a99cc9;
+  --line: #4a3376;
+  --line-strong: #8069b5;
+
+  --accent: #7446f5;
+  --accent-strong: #6233e0;
+  --accent-ink: #cdbcff;
+  --accent-soft: #3a2170;
+  --star: #ffd98a;
+  --on-star: #2a1a00;
+
+  --success: #7ee2b0;
+  --success-soft: #10291f;
+  --warn: #ffd166;
+  --warn-soft: #33270f;
+  --warn-line: #6b5213;
+  --danger: #ff8fa3;
+  --danger-soft: #3a1225;
+  --danger-line: #7a2a45;
+
+  --shell: #33176f;
+  --shell-line: #4f2f96;
+  --on-shell: #f4efff;
+  --on-shell-muted: #c4b8e6;
+  --shadow-color: 4 0 16;
+}
+
+@theme inline {
+  --color-sky: var(--sky);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-star: var(--star);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-on-shell: var(--on-shell);
+  --color-on-shell-muted: var(--on-shell-muted);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Browser surfaces ===== */
+@layer base {
+  *,
+  ::before,
+  ::after,
+  ::backdrop {
+    border-color: var(--line);
+  }
+
+  html {
+    background: var(--sky);
+  }
+
+  /* Firefox only: in Chrome, scrollbar-color would disable the ::-webkit-scrollbar styles below. */
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-color: color-mix(in srgb, var(--accent) 55%, transparent) transparent;
+    }
+  }
+
+  body {
+    background: transparent;
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    caret-color: var(--accent-ink);
+  }
+
+  button:not(:disabled),
+  summary,
+  label[for],
+  [role="tab"] {
+    cursor: pointer;
+  }
+
+  a {
+    text-underline-offset: 2px;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::before {
+    content: "";
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M8.22 5.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 010-1.06z'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    transition: transform 160ms var(--ease-out-expo);
+  }
+  details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    accent-color: var(--accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 45%, transparent);
+    color: var(--foreground);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--accent) 50%, transparent);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent) 75%, transparent);
+  }
+}
+
+/* ===== Living sky ===== */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  background: var(--sky);
+}
+.sky-nebula {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(45% 40% at 18% 20%, var(--nebula-a), transparent 72%),
+    radial-gradient(40% 45% at 86% 14%, var(--nebula-b), transparent 72%),
+    radial-gradient(55% 42% at 68% 90%, var(--nebula-c), transparent 74%);
+  animation: nebula-drift 70s ease-in-out infinite alternate;
+}
+.sky-field {
+  position: absolute;
+  inset: 0;
+}
+/* In the app, keep stars out from behind the title block so none reads as punctuation. */
+body:has(.shell) .sky-field {
+  mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+  mask-size: 100% 100%, min(72rem, 100%) 10.5rem;
+  mask-position: 0 0, 50% 0;
+  mask-repeat: no-repeat;
+  mask-composite: exclude;
+}
+/* Oversized by one tile so translating exactly one tile loops without a seam. */
+.sky-stars {
+  position: absolute;
+  top: -1000px;
+  left: 0;
+  right: -1600px;
+  bottom: 0;
+  opacity: var(--stars-opacity);
+  will-change: transform;
+  animation: sky-drift 720s linear infinite;
+}
+.sky-far {
+  background-image: url("/stars-far.svg");
+}
+.sky-near {
+  background-image: url("/stars-near.svg");
+  animation-duration: 420s;
+}
+.sky-bright {
+  background-image: url("/stars-bright.svg");
+  animation:
+    sky-drift 420s linear infinite,
+    twinkle 7s ease-in-out infinite alternate;
+}
+.sky-bright-alt {
+  background-position: 700px 310px;
+  animation-delay: 0s, -3.5s;
+  animation-duration: 420s, 9s;
+}
+
+@keyframes sky-drift {
+  to {
+    transform: translate3d(-1600px, 1000px, 0);
+  }
+}
+@keyframes nebula-drift {
+  to {
+    transform: translate3d(3%, -3%, 0) scale(1.08);
+  }
+}
+@keyframes twinkle {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: var(--stars-opacity);
+  }
+}
+
+/* Sign-in only: a planet horizon and one orbiting moon. */
+.planet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: -5;
+  width: 170vmax;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 0%,
+    var(--planet-rim) 0%,
+    var(--planet-body) 16%,
+    var(--planet-core) 52%
+  );
+  transform: translate(-50%, 87%);
+  animation: planet-rise 1100ms var(--ease-out-expo) both;
+}
+.orbit {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: -4;
+  width: min(46rem, 135vw);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent);
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: orbit 80s linear infinite;
+}
+.orbit::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-ink);
+}
+@keyframes planet-rise {
+  from {
+    transform: translate(-50%, 93%);
+  }
+}
+@keyframes orbit {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ===== Components ===== */
+@layer components {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 0.875rem;
+    box-shadow: 0 8px 24px -14px rgb(var(--shadow-color) / 0.55);
+  }
+
+  .shell {
+    background: var(--shell);
+    border-bottom: 1px solid var(--shell-line);
+    color: var(--on-shell);
+  }
+
+  /* The logo is white with a cyan glow, so light-mode cards need a dark ground behind it. */
+  .logo-chip {
+    background: var(--shell);
+    border-radius: 0.375rem;
+    padding: 2px;
+  }
+  .dark .logo-chip {
+    background: transparent;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color 150ms ease-out,
+      border-color 150ms ease-out,
+      color 150ms ease-out,
+      transform 150ms var(--ease-out-expo);
+  }
+  .btn:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--surface-3);
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn:has(input:focus-visible) {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    border-color: transparent;
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .btn-primary:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--accent-strong);
+  }
+  .btn-ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--accent-ink);
+  }
+  .btn-ghost:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--accent-soft);
+  }
+  .btn-danger:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: var(--danger-line);
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .btn-shell {
+    border-color: var(--shell-line);
+    background: transparent;
+    color: var(--on-shell);
+  }
+  .btn-shell:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--shell-line);
+  }
+  .btn-sm {
+    min-height: 1.75rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  .btn-icon {
+    width: 2.25rem;
+    padding: 0;
+  }
+  .btn-icon.btn-sm {
+    width: 1.75rem;
+  }
+  .btn-send svg {
+    transition: transform 200ms var(--ease-out-expo);
+  }
+  .btn-send:hover:not(:disabled) svg {
+    transform: translate(2px, -2px);
+  }
+
+  .input {
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 150ms ease-out;
+  }
+  .input::placeholder {
+    color: var(--subtle);
+  }
+  .input:hover {
+    border-color: var(--accent-ink);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+  }
+  .chip-accent {
+    border-color: color-mix(in srgb, var(--accent-ink) 35%, transparent);
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+  .chip-warn {
+    border-color: var(--warn-line);
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .chip-danger {
+    border-color: var(--danger-line);
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .chip-shell {
+    border-color: var(--shell-line);
+    background: transparent;
+    color: var(--on-shell-muted);
+  }
+
+  .notice {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+    animation: rise 220ms var(--ease-out-expo);
+  }
+  .notice-accent {
+    border-color: color-mix(in srgb, var(--accent-ink) 35%, transparent);
+    background: var(--accent-soft);
+    color: var(--foreground);
+  }
+  .notice-warn {
+    border-color: var(--warn-line);
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .notice-danger {
+    border-color: var(--danger-line);
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  /* Step rail */
+  .rail {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 0.375rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border: 1px solid var(--line);
+    border-radius: 0.875rem;
+    background: var(--surface);
+  }
+  .rail-indicator {
+    position: absolute;
+    top: 0.375rem;
+    bottom: 0.375rem;
+    left: 0;
+    border-radius: 0.5625rem;
+    background: var(--accent);
+    transition:
+      transform 280ms var(--ease-out-expo),
+      width 280ms var(--ease-out-expo);
+  }
+  .rail-tab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5625rem;
+    text-align: left;
+    white-space: nowrap;
+    transition: background-color 150ms ease-out;
+  }
+  .rail-tab:not([aria-selected="true"]):hover {
+    background: var(--surface-2);
+  }
+  .rail-tab[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  .rail-node {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color 200ms ease-out,
+      color 200ms ease-out,
+      border-color 200ms ease-out;
+  }
+  .rail-tab[aria-selected="true"] .rail-node {
+    border-color: rgb(255 255 255 / 0.55);
+    background: rgb(255 255 255 / 0.18);
+    color: #ffffff;
+  }
+  .rail-node[data-done="true"],
+  .rail-tab[aria-selected="true"] .rail-node[data-done="true"] {
+    border-color: var(--star);
+    background: var(--star);
+    color: var(--on-star);
+    animation: ignite 520ms var(--ease-out-expo);
+  }
+  .rail-link {
+    position: relative;
+    align-self: center;
+    flex: none;
+    width: 1.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .rail-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--star);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 420ms var(--ease-out-expo);
+  }
+  .rail-link[data-done="true"]::after {
+    transform: scaleX(1);
+  }
+  /* Phones: all steps stay visible as nodes, and only the current one is labeled. */
+  @media (max-width: 639px) {
+    .rail-tab {
+      padding: 0.5rem 0.375rem;
+    }
+    .rail-tab:not([aria-selected="true"]) {
+      gap: 0;
+    }
+    .rail-tab[aria-selected="true"] {
+      padding-inline: 0.625rem;
+    }
+    .rail-link {
+      width: 0.75rem;
+    }
+  }
+
+  /* Drop zone */
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.75rem 1rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    transition:
+      background-color 180ms ease-out,
+      border-color 180ms ease-out,
+      color 180ms ease-out;
+  }
+  .dropzone svg {
+    transition: transform 240ms var(--ease-out-expo);
+  }
+  .dropzone:hover,
+  .dropzone[data-active="true"] {
+    border-color: var(--accent-ink);
+    background: var(--accent-soft);
+    color: var(--foreground);
+  }
+  .dropzone:hover svg,
+  .dropzone[data-active="true"] svg {
+    transform: translateY(-3px);
+  }
+
+  /* Batch size segmented control */
+  .segments {
+    display: inline-flex;
+    padding: 2px;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.5rem;
+  }
+  .segment {
+    position: relative;
+    cursor: pointer;
+  }
+  .segment[data-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .segment-face {
+    display: block;
+    min-width: 2.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color 160ms ease-out,
+      color 160ms ease-out;
+  }
+  .segment input:checked + .segment-face {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .segment input:focus-visible + .segment-face {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 1px;
+  }
+
+  /* Raw HTML editor stays dark in both modes */
+  .code-editor {
+    border: 1px solid #4a3376;
+    border-radius: 0.75rem;
+    background: #1a0a30;
+    color: #efe9fb;
+    font-family: var(--font-geist-mono), monospace;
+    caret-color: #cdbcff;
+  }
+
+  /* Dialogs */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--sky) 78%, transparent);
+    animation: fade 180ms ease-out;
+  }
+  .modal {
+    width: 100%;
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    border: 1px solid var(--line-strong);
+    border-radius: 1rem;
+    background: var(--surface);
+    box-shadow: 0 24px 60px -20px rgb(var(--shadow-color) / 0.8);
+    animation: modal-in 240ms var(--ease-out-expo);
+  }
+
+  /* Send constellation: one star per recipient, grouped by batch */
+  .send-sky {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.75rem;
+    max-height: 11rem;
+    overflow: auto;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: #1a0a30 url("/stars-far.svg");
+  }
+  .send-batch {
+    position: relative;
+    height: 3.125rem;
+  }
+  .send-star {
+    position: absolute;
+    width: 1.25rem;
+    height: 1.25rem;
+    background: radial-gradient(circle, #9d8fc7 0 16%, #1a0a30 30%);
+    border-radius: 50%;
+  }
+  .send-star.is-current {
+    background: radial-gradient(circle, #ffffff 0 18%, #1a0a30 36%);
+    animation: pending-pulse 1.1s ease-in-out infinite alternate;
+  }
+  .send-star.is-sent {
+    background: radial-gradient(circle, #ffffff 0 16%, #ffd98a 28%, #ffd98a00 68%), #1a0a30;
+    animation: ignite 560ms var(--ease-out-expo) both;
+  }
+  .send-star.is-failed {
+    background: radial-gradient(circle, #ffd5de 0 14%, #ff5c7f 28%, #ff5c7f00 68%), #1a0a30;
+    animation: ignite 560ms var(--ease-out-expo) both;
+  }
+  /* The whole sky answers once when a run finishes clean. */
+  .send-sky[data-done="true"] .send-star {
+    animation: ignite 700ms var(--ease-out-expo) both;
+    animation-delay: calc(min(var(--i) * 18ms, 900ms));
+  }
+
+  .progress {
+    display: flex;
+    width: 100%;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-3);
+  }
+  .progress-sent,
+  .progress-failed {
+    height: 100%;
+    background: var(--star);
+    transition: width 420ms var(--ease-out-expo);
+  }
+  .progress-failed {
+    background: var(--danger);
+  }
+
+  /* Help tab. The typography plugin isn't installed, so this sets its own rhythm. */
+  .docs {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+  .docs > * {
+    max-width: 72ch;
+  }
+  .docs h1 {
+    color: var(--foreground);
+    font-size: 1.625rem;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .docs h2 {
+    margin-bottom: 0.5rem;
+    color: var(--foreground);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .docs h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--foreground);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  .docs p,
+  .docs ul,
+  .docs ol,
+  .docs pre {
+    margin-top: 0.625rem;
+  }
+  .docs strong {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  .docs ul,
+  .docs ol {
+    padding-left: 1.25rem;
+  }
+  .docs ul {
+    list-style: disc;
+  }
+  .docs ol {
+    list-style: decimal;
+  }
+  .docs li + li {
+    margin-top: 0.25rem;
+  }
+  .docs li::marker {
+    color: var(--accent-ink);
+  }
+  .docs code {
+    padding: 0.0625rem 0.3125rem;
+    border-radius: 0.25rem;
+    background: var(--surface-3);
+    color: var(--foreground);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.8125rem;
+  }
+  .docs pre {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 0.625rem;
+    background: var(--surface-2);
+    overflow-wrap: anywhere;
+  }
+  .docs pre code {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+/* ===== Interface motion ===== */
+[role="tabpanel"]:not([hidden]) {
+  animation: rise 240ms var(--ease-out-expo);
+}
+.popover {
+  animation: pop-in 160ms var(--ease-out-expo);
+  transform-origin: top left;
+}
+.signin-card {
+  animation: modal-in 520ms var(--ease-out-expo) both;
+}
+.icon-swap {
+  animation: icon-swap 300ms var(--ease-out-expo);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+@keyframes icon-swap {
+  from {
+    opacity: 0;
+    transform: rotate(-60deg) scale(0.7);
+  }
+}
+@keyframes ignite {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.5);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes pending-pulse {
+  from {
+    opacity: 0.45;
+  }
+}
+
+@media (pointer: coarse) {
+  .btn {
+    min-height: 2.75rem;
+  }
+  .btn-sm {
+    min-height: 2.25rem;
+  }
+  .btn-icon {
+    width: 2.75rem;
+  }
+  .btn-icon.btn-sm {
+    width: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .sky *,
+  .orbit {
+    animation: none !important;
+  }
+}
+
+/* ===== Email editor: shows the message as recipients see it, so it stays light ===== */
+.email-editor-surface {
+  color-scheme: light;
+  background-color: #ffffff;
+  color: #111827;
+  caret-color: #111827;
+}
+.email-editor-surface a {
+  color: #049fd9;
+  text-decoration: underline;
+}
+.email-editor-surface ::selection {
+  background: #cdbcff;
+  color: #111827;
+}
+
+/* Tailwind preflight strips list markers; restore them inside the editor
+   so the bulleted/numbered list buttons produce visible output. */
+.email-editor-surface ul,
+.email-editor-surface ol {
+  margin: 0.25rem 0;
+  padding-left: 1.5rem;
+}
+.email-editor-surface ul {
+  list-style-type: disc;
+}
+.email-editor-surface ul ul {
+  list-style-type: circle;
+}
+.email-editor-surface ul ul ul {
+  list-style-type: square;
+}
+.email-editor-surface ol {
+  list-style-type: decimal;
+}
+.email-editor-surface ol ol {
+  list-style-type: lower-alpha;
+}
+.email-editor-surface ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* ===== Driver.js tours ===== */
 .driver-popover {
   all: unset;
   box-sizing: border-box;
-  color: #2d2d2d;
+  color: var(--foreground);
   margin: 0;
-  padding: 15px;
-  border-radius: 5px;
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
   min-width: 250px;
-  max-width: 300px;
-  box-shadow: 0 1px 10px #0006;
+  max-width: 320px;
+  box-shadow: 0 16px 40px -16px rgb(var(--shadow-color) / 0.8);
   z-index: 1000000000;
   position: fixed;
   top: 0;
   right: 0;
-  background-color: #fff;
+  background-color: var(--surface);
 }
 .driver-popover * {
-  font-family: "Helvetica Neue", Inter, ui-sans-serif, "Apple Color Emoji", Helvetica, Arial, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 .driver-popover-title {
-  font: 19px/normal sans-serif;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   display: block;
   position: relative;
-  line-height: 1.5;
+  line-height: 1.4;
   zoom: 1;
   margin: 0;
 }
 .driver-popover-close-btn {
   all: unset;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 4px;
+  right: 4px;
   width: 32px;
   height: 28px;
   cursor: pointer;
   font-size: 18px;
   font-weight: 500;
-  color: #d2d2d2;
+  color: var(--subtle);
   z-index: 1;
   text-align: center;
-  transition: color;
-  transition-duration: 0.2s;
+  transition: color 150ms ease-out;
 }
 .driver-popover-close-btn:hover,
 .driver-popover-close-btn:focus {
-  color: #2d2d2d;
+  color: var(--foreground);
 }
 .driver-popover-title[style*="block"] + .driver-popover-description {
   margin-top: 5px;
 }
 .driver-popover-description {
   margin-bottom: 0;
-  font: 14px/normal sans-serif;
+  font-size: 14px;
   line-height: 1.5;
   font-weight: 400;
+  color: var(--muted);
   zoom: 1;
 }
 .driver-popover-footer {
@@ -74,35 +1075,37 @@
 .driver-popover-progress-text {
   font-size: 13px;
   font-weight: 400;
-  color: #727272;
+  color: var(--subtle);
   zoom: 1;
 }
 .driver-popover-footer button {
   all: unset;
   display: inline-block;
   box-sizing: border-box;
-  padding: 3px 7px;
+  padding: 4px 10px;
   text-decoration: none;
   text-shadow: none;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   line-height: 1.5;
   zoom: 1;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  color: #555;
-  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  transition: background-color 150ms ease-out;
+  color: var(--foreground);
+  background: var(--surface);
 }
 .driver-popover-footer .driver-popover-btn-disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 .driver-popover-footer button:hover {
-  background-color: #ebf6fc;
-  border-color: #049fd9;
-  color: #0d274d;
+  background-color: var(--surface-3);
+}
+.driver-popover-footer button:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
 }
 .driver-popover-navigation-btns {
   display: flex;
@@ -115,7 +1118,7 @@
 .driver-popover-arrow {
   content: "";
   position: absolute;
-  border: 5px solid #fff;
+  border: 5px solid var(--surface);
 }
 .driver-popover-arrow-side-over {
   display: none;
@@ -184,7 +1187,7 @@
   bottom: 0;
   display: block;
   pointer-events: auto;
-  background: rgba(13, 39, 77, 0.6);
+  background: rgba(11, 6, 24, 0.6);
   z-index: 10000;
 }
 .driver-active .driver-overlay ~ * {
@@ -199,250 +1202,3 @@
 .driver-popover * {
   pointer-events: auto !important;
 }
-
-/* ===== Cisco NetConnect PUP - Manila design tokens ===== */
-:root {
-  --background: #f5f8fb;
-  --surface: #ffffff;
-  --foreground: #0d274d; /* Cisco deep navy */
-  --accent: #049fd9; /* Cisco blue */
-  --accent-strong: #0071a4; /* hover / pressed */
-  --accent-deep: #0d274d; /* navy for headers & active states */
-  --accent-soft: #ebf6fc; /* light sky tint */
-  --border: #dbe4ec;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
-  --color-accent-deep: var(--accent-deep);
-  --color-accent-soft: var(--accent-soft);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-body {
-  background: transparent;
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-}
-
-/* ===== Ambient Cisco backdrop ===== */
-.site-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -10;
-  background-image: url("/cisco_extended_image.jpg");
-  background-size: cover;
-  background-position: center;
-  transform: scale(1.03);
-  filter: blur(2px) saturate(1.06);
-}
-/* Soft veil so UI stays readable while the artwork glows through */
-.site-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(245, 248, 251, 0.86) 0%,
-    rgba(245, 248, 251, 0.52) 38%,
-    rgba(245, 248, 251, 0.82) 100%
-  );
-}
-.dark .site-backdrop::after {
-  background: linear-gradient(
-    180deg,
-    rgba(7, 19, 36, 0.88) 0%,
-    rgba(7, 19, 36, 0.58) 38%,
-    rgba(7, 19, 36, 0.92) 100%
-  );
-}
-
-/* Frosted glass shell for the main workspace panel */
-.tabs-shell {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-.dark .tabs-shell {
-  background: rgba(12, 28, 51, 0.74);
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 2px rgba(13, 39, 77, 0.06), 0 1px 3px rgba(13, 39, 77, 0.08);
-}
-
-/* ===== Dark theme overrides (activated by wrapping container with class "dark") ===== */
-.dark {
-  --background: #071324; /* near-black navy */
-  --surface: #0c1c33;
-  --foreground: #eaf2fa;
-  --accent: #38bdf8; /* brighter cisco blue for contrast */
-  --accent-strong: #049fd9;
-  --accent-deep: #0c1c33;
-  --accent-soft: #10263f;
-  --border: #22405f;
-}
-
-.dark body {
-  background: transparent;
-  color: var(--foreground);
-}
-
-.dark .card {
-  background: var(--surface);
-}
-
-/* Text overrides for common gray/black classes to ensure readability */
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-gray-700,
-.dark .text-black { color: #eaf2fa; }
-.dark .text-gray-600 { color: #d3e2ef; }
-.dark .text-gray-500 { color: #a9c1d6; }
-
-/* Background overrides for common light backgrounds used across components */
-.dark .bg-white { background-color: #0c1c33; }
-.dark .bg-gray-50 { background-color: #10263f; }
-.dark .bg-gray-100 { background-color: #10263f; }
-.dark .bg-yellow-50 { background-color: #33290a; }
-
-/* Hover utilities commonly used */
-.dark .hover\:bg-gray-50:hover { background-color: #10263f; }
-.dark .hover\:bg-gray-100:hover { background-color: #16304d; }
-
-/* Borders */
-.dark .border { border-color: var(--border); }
-.dark .border-gray-100,
-.dark .border-gray-200,
-.dark .border-gray-300,
-.dark .border-gray-800 { border-color: var(--border); }
-
-/* Inputs, selects, textareas */
-.dark input,
-.dark select,
-.dark textarea { background-color: #10263f; color: #eaf2fa; border-color: var(--border); }
-.dark input::placeholder,
-.dark textarea::placeholder { color: #7f9cb5; }
-
-/* Tables and alternating rows */
-.dark table { background-color: #0c1c33; color: #d3e2ef; }
-.dark thead { background-color: #122a47; }
-.dark th, .dark td { border-color: var(--border); }
-.dark tbody tr:nth-child(odd) { background-color: #0c1c33; }
-.dark tbody tr:nth-child(even) { background-color: #10263f; }
-
-/* Code blocks or monospace areas if any */
-.dark .font-mono { color: #d3e2ef; }
-
-/* Buttons that are light by default */
-.dark .bg-white.border,
-.dark .border-gray-300.bg-white,
-.dark .border-gray-200.bg-white { background-color: #10263f; color: #eaf2fa; border-color: var(--border); }
-
-/* Badges/pills tweaks for visibility */
-.dark .bg-green-50 { background-color: #0d2f20; }
-.dark .text-green-800 { color: #86efac; }
-.dark .bg-red-50 { background-color: #33111b; }
-.dark .text-red-800 { color: #fda4af; }
-.dark .bg-yellow-100 { background-color: #33290a; }
-.dark .text-yellow-800 { color: #fde68a; }
-
-/* ===== Keep-light utilities to exclude certain areas from dark ===== */
-.dark .keep-light-surface, .dark .keep-light-surface * {
-  background-color: #ffffff !important;
-  color: #111827 !important;
-  border-color: #e5e7eb !important;
-}
-.dark .keep-light-text { color: #1f2937 !important; }
-.dark .keep-light-pill {
-  background-color: #ebf6fc !important; /* cisco sky tint */
-  color: #0d274d !important;           /* navy */
-  border-color: #9bd8f3 !important;    /* light cisco blue */
-}
-
-/* Keep only the actual email editor surface light in dark mode */
-.dark .email-editor-surface {
-  background-color: #ffffff !important;
-  color: #111827 !important;
-  border-color: #e5e7eb !important;
-}
-/* Ensure the email content renders like light mode even in dark */
-.dark .email-editor-surface * {
-  color: #111827 !important;
-}
-/* Revert common Tailwind light classes inside the email viewer */
-.dark .email-editor-surface .text-gray-900 { color: #111827 !important; }
-.dark .email-editor-surface .text-gray-800 { color: #1f2937 !important; }
-.dark .email-editor-surface .text-gray-700 { color: #374151 !important; }
-.dark .email-editor-surface .text-gray-600 { color: #4b5563 !important; }
-.dark .email-editor-surface .text-black { color: #000000 !important; }
-.dark .email-editor-surface .bg-white { background-color: #ffffff !important; }
-.dark .email-editor-surface .bg-gray-50 { background-color: #f9fafb !important; }
-.dark .email-editor-surface .bg-gray-100 { background-color: #f3f4f6 !important; }
-.dark .email-editor-surface .border,
-.dark .email-editor-surface .border-gray-100,
-.dark .email-editor-surface .border-gray-200,
-.dark .email-editor-surface .border-gray-300 { border-color: #e5e7eb !important; }
-
-/* The global dark rules for tables should NOT affect the email viewer */
-.dark .email-editor-surface table,
-.dark .email-editor-surface thead,
-.dark .email-editor-surface tbody,
-.dark .email-editor-surface tr,
-.dark .email-editor-surface th,
-.dark .email-editor-surface td {
-  background-color: #ffffff !important;
-  color: #111827 !important;
-  border-color: #e5e7eb !important;
-}
-.dark .email-editor-surface tbody tr:nth-child(odd),
-.dark .email-editor-surface tbody tr:nth-child(even) {
-  background-color: #ffffff !important;
-}
-
-/* Links and buttons in email content keep light-mode colors */
-.dark .email-editor-surface a { color: #049fd9 !important; }
-.dark .email-editor-surface button { color: #111827 !important; }
-
-/* Tailwind preflight strips list markers; restore them inside the editor
-   so the bulleted/numbered list buttons produce visible output. */
-.email-editor-surface ul,
-.email-editor-surface ol {
-  margin: 0.25rem 0;
-  padding-left: 1.5rem;
-}
-.email-editor-surface ul {
-  list-style-type: disc;
-}
-.email-editor-surface ul ul {
-  list-style-type: circle;
-}
-.email-editor-surface ul ul ul {
-  list-style-type: square;
-}
-.email-editor-surface ol {
-  list-style-type: decimal;
-}
-.email-editor-surface ol ol {
-  list-style-type: lower-alpha;
-}
-.email-editor-surface ol ol ol {
-  list-style-type: lower-roman;
-}
-
-/* Brand scrollbar accents */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: rgba(4, 159, 217, 0.35);
-  border-radius: 8px;
-}
-::-webkit-scrollbar-thumb:hover { background: rgba(4, 159, 217, 0.55); }

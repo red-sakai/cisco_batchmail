@@ -24,9 +24,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Runs before paint so a saved light preference never flashes dark. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("batchmail_dark")==="0")document.documentElement.classList.remove("dark")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="site-backdrop" aria-hidden="true" />
+        <div className="sky" aria-hidden="true">
+          <div className="sky-nebula" />
+          <div className="sky-field">
+            <div className="sky-stars sky-far" />
+            <div className="sky-stars sky-near" />
+            <div className="sky-stars sky-bright" />
+            <div className="sky-stars sky-bright sky-bright-alt" />
+          </div>
+        </div>
         {children}
       </body>
     </html>

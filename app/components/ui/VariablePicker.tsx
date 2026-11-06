@@ -34,31 +34,34 @@ export default function VariablePicker({ variables, onInsert, label = "Insert va
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="px-2 py-1 border border-gray-200 rounded text-xs bg-white hover:bg-gray-50"
+        className="btn btn-sm"
+        aria-expanded={open}
       >
         {label}
       </button>
       {open && (
-        <div className="absolute z-10 mt-2 w-56 rounded border border-gray-200 bg-white shadow">
-          <div className="p-2 border-b border-gray-200">
+        <div className="card popover absolute right-0 z-20 mt-2 w-56 overflow-hidden">
+          <div className="p-2 border-b border-line">
             <input
+              autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search variables"
-              className="w-full border border-gray-200 rounded px-2 py-1 text-xs"
+              aria-label="Search variables"
+              className="input w-full text-xs"
             />
           </div>
           <div className="max-h-56 overflow-auto">
             {filtered.length === 0 ? (
-              <div className="p-2 text-xs opacity-70">No matches</div>
+              <div className="p-3 text-xs text-subtle">No matches</div>
             ) : (
-              <ul className="text-sm">
+              <ul className="text-sm font-mono">
                 {filtered.map((v) => (
                   <li key={v}>
                     <button
                       type="button"
                       onClick={() => { onInsert(v); setOpen(false); setQ(""); }}
-                      className="w-full text-left px-3 py-2 hover:bg-gray-50"
+                      className="w-full text-left text-xs px-3 py-2 transition-colors hover:bg-accent-soft hover:text-accent-ink"
                     >
                       {`{{ ${v} }}`}
                     </button>
